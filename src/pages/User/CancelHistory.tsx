@@ -1,5 +1,5 @@
-import React from 'react';
-
-export default function CancelHistory() {
+const CancelHistory = () => {
   return <div>CancelHistory</div>;
-}
+};
+
+export default CancelHistory;

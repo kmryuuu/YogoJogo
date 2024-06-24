@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "@/pages/Common/Home";
 import Login from "@/pages/Common/Login";
@@ -15,7 +14,7 @@ import Inventory from "@/pages/Admin/Inventory";
 import CreateProduct from "@/pages/Admin/CreateProduct";
 import Error from "@/pages/Common/Error";
 
-export default function Router() {
+const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -37,4 +36,6 @@ export default function Router() {
       </Routes>
     </BrowserRouter>
   );
-}
+};
+
+export default Router;

@@ -1,5 +1,5 @@
-import React from 'react';
-
-export default function CreateProduct() {
+const CreateProduct = () => {
   return <div>CreateProduct</div>;
-}
+};
+
+export default CreateProduct;

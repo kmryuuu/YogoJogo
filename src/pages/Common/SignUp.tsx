@@ -1,5 +1,13 @@
-import React from 'react';
+import { useEffect } from "react";
+import { auth } from "@/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-export default function SignUp() {
+const SignUp = () => {
+  useEffect(() => {
+    createUserWithEmailAndPassword(auth, "test@test.com", "12341234");
+  }, []);
+
   return <div>SignUp</div>;
-}
+};
+
+export default SignUp;

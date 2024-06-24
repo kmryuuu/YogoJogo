@@ -1,5 +1,5 @@
-import React from 'react';
-
-export default function ProfileEdit() {
+const ProfileEdit = () => {
   return <div>ProfileEdit</div>;
-}
+};
+
+export default ProfileEdit;

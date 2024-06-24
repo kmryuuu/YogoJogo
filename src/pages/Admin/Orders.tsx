@@ -1,5 +1,5 @@
-import React from 'react';
-
-export default function Orders() {
+const Orders = () => {
   return <div>Orders</div>;
-}
+};
+
+export default Orders;

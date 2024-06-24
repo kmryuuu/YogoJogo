@@ -1,5 +1,5 @@
-import React from 'react';
-
-export default function OrderHistory() {
+const OrderHistory = () => {
   return <div>OrderHistory</div>;
-}
+};
+
+export default OrderHistory;
