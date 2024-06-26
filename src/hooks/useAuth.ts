@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { auth } from "@/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
   signOut,
+  onAuthStateChanged,
   User,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -35,15 +35,15 @@ const errorMessage = (code: string) => {
 
 const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null); // 상태를 User | null 타입으로 정의
   const navigate = useNavigate();
 
-  // 현재 사용자 업데이트
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      setUser(currentUser); // 현재 사용자 상태를 업데이트
     });
 
+    // 컴포넌트 언마운트 시 리스너 해제
     return () => unsubscribe();
   }, []);
 
@@ -85,10 +85,10 @@ const useAuth = () => {
   const logout = async () => {
     try {
       await signOut(auth);
-      navigate("/");
+      navigate("/login"); // 로그아웃 후 이동할 경로 설정
       setUser(null);
     } catch (error) {
-      console.log("로그아웃을 하지 못했습니다.");
+      console.error("Logout Error:", error);
     }
   };
 
