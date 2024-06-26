@@ -4,6 +4,7 @@ import LoginForm from "@/components/Form/LoginForm";
 const Login = () => {
   return (
     <div className="justify-content flex flex-col items-center">
+      <h2 className="text-2xl">이메일로 로그인</h2>
       <LoginForm />
       <div className="flex gap-2">
         <p>아직 회원이 아니신가요?</p>

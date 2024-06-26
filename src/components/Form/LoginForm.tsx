@@ -11,17 +11,23 @@ const LoginForm = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    clearErrors,
   } = useForm<LoginFormInputs>();
 
-  const { login, error } = useAuth();
+  const { login, user, error, resetError } = useAuth();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
     login(data.email, data.password);
   };
 
+  const handleFocus = () => {
+    resetError();
+    clearErrors();
+  };
+
   return (
     <>
-      <h2 className="text-2xl">이메일로 로그인</h2>
+      {user ? "로그인됌" : "로그아웃됌"}
       <form
         noValidate
         onSubmit={handleSubmit(onSubmit)}
@@ -38,6 +44,7 @@ const LoginForm = () => {
           {...register("email", {
             required: "이메일을 입력해 주세요.",
           })}
+          onFocus={handleFocus}
         />
         {errors.email && <p>{errors.email.message}</p>}
         <label htmlFor="password" className="sr-only">
@@ -59,6 +66,7 @@ const LoginForm = () => {
               message: "비밀번호는 8-16자 이내이어야 합니다.",
             },
           })}
+          onFocus={handleFocus}
         />
         {errors.password && <p>{errors.password.message}</p>}
         {error && <p>{error}</p>}
