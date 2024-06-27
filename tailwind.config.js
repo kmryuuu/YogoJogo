@@ -30,6 +30,11 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         buttonKakao: "#FFF500",
+        fontColor: {
+          lightGray: "rgb(203 213 225)",
+          midGray: "rgb(148 163 184)",
+          darkGray: "rgb(100 116 139)",
+        },
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",

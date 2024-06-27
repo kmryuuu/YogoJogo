@@ -44,14 +44,16 @@ const SignUpForm = () => {
       <form
         noValidate
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col"
+        className="flex w-full flex-col text-sm"
       >
-        <label htmlFor="name">이름</label>
+        <label htmlFor="name" className="text-fontColor-darkGray">
+          이름
+        </label>
         <input
           id="name"
           type="text"
           placeholder="이름을 입력해 주세요."
-          className="border"
+          className="form-input placeholder:text-fontColor-lightGray my-2 border"
           {...register("name", {
             required: "이름을 입력해 주세요.",
             pattern: {
@@ -68,13 +70,17 @@ const SignUpForm = () => {
             },
           })}
         />
-        {errors.name && <p>{errors.name.message}</p>}
-        <label htmlFor="email">이메일</label>
+        {errors.name && (
+          <p className="text-xs text-red-500">{errors.name.message}</p>
+        )}
+        <label htmlFor="email" className="text-fontColor-darkGray mt-4">
+          이메일
+        </label>
         <input
           id="email"
           type="email"
           placeholder="이메일을 입력해 주세요."
-          className="border"
+          className="form-input placeholder:text-fontColor-lightGray my-2 border"
           {...register("email", {
             required: "이메일을 입력해 주세요.",
             pattern: {
@@ -83,13 +89,20 @@ const SignUpForm = () => {
             },
           })}
         />
-        {errors.email && <p>{errors.email.message}</p>}
-        <label htmlFor="password">비밀번호</label>
+        {errors.email && (
+          <p className="text-xs text-red-500">{errors.email.message}</p>
+        )}
+        <label htmlFor="password" className="text-fontColor-darkGray mt-4">
+          비밀번호
+        </label>
+        <p className="text-fontColor-midGray my-2 text-xs">
+          영문, 숫자, 특수문자를 포함하여 8-16자 이내로 입력해 주세요.
+        </p>
         <input
           id="password"
           type="password"
           placeholder="비밀번호를 입력해 주세요."
-          className="border"
+          className="form-input placeholder:text-fontColor-lightGray my-2 border"
           {...register("password", {
             required: "비밀번호를 입력해 주세요.",
             pattern: {
@@ -107,13 +120,20 @@ const SignUpForm = () => {
             },
           })}
         />
-        {errors.password && <p>{errors.password.message}</p>}
-        <label htmlFor="">비밀번호 확인</label>
+        {errors.password && (
+          <p className="text-xs text-red-500">{errors.password.message}</p>
+        )}
+        <label
+          htmlFor="passwordConfirm"
+          className="text-fontColor-darkGray mt-4"
+        >
+          비밀번호 확인
+        </label>
         <input
           id="passwordConfirm"
           type="password"
           placeholder="비밀번호를 한 번 더 입력해 주세요."
-          className="border"
+          className="form-input placeholder:text-fontColor-lightGray my-2 border"
           {...register("passwordConfirm", {
             required: "비밀번호를 한 번 더 입력해 주세요.",
             minLength: {
@@ -130,15 +150,19 @@ const SignUpForm = () => {
             },
           })}
         />
-        {errors.passwordConfirm && <p>{errors.passwordConfirm.message}</p>}
-        {error && <p>{error}</p>}
+        {errors.passwordConfirm && (
+          <p className="text-xs text-red-500">
+            {errors.passwordConfirm.message}
+          </p>
+        )}
+        {error && <p className="text-xs text-red-500">{error}</p>}
         <button
           type="submit"
           disabled={!isAllFieldsFilled || !isValid || isSubmitting}
           className={`bg-primary text-primary-foreground ${
             !isAllFieldsFilled || !isValid || isSubmitting
-              ? "cursor-not-allowed bg-slate-300 text-white"
-              : "cursor-pointer"
+              ? "button-shape mt-8 cursor-not-allowed bg-slate-200 font-bold text-white"
+              : "button-shape cursor-pointe mt-8 font-bold"
           }`}
         >
           회원가입 완료

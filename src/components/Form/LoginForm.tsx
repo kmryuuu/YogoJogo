@@ -47,7 +47,7 @@ const LoginForm = () => {
           className={`form-input mb-2 border ${
             errors.email
               ? "border-red-500 placeholder:text-white"
-              : "border-gray-300"
+              : "border-white"
           } bg-transparent text-white placeholder:text-white`}
           {...register("email", {
             required: "이메일을 입력해 주세요.",
@@ -65,7 +65,7 @@ const LoginForm = () => {
           type="password"
           placeholder="비밀번호를 입력해 주세요."
           className={`form-input border ${
-            errors.password ? "border-red-500" : "border-gray-300"
+            errors.password ? "border-red-500" : "border-white"
           } bg-transparent text-white placeholder:text-white`}
           {...register("password", {
             required: "비밀번호를 입력해 주세요.",
