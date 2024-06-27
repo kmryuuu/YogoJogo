@@ -13,14 +13,14 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     clearErrors,
-  } = useForm<LoginFormInputs>();
+  } = useForm<LoginFormInputs>({ mode: "onBlur" });
 
-  const { login, user, error, resetError } = useAuth();
+  const { login, error, resetError } = useAuth();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    login(data.email, data.password);
-    if (!error) {
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    const loginSuccess = await login(data.email, data.password);
+    if (loginSuccess) {
       navigate("/");
     }
   };
@@ -32,11 +32,10 @@ const LoginForm = () => {
 
   return (
     <>
-      {user ? "로그인됌" : "로그아웃됌"}
       <form
         noValidate
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col"
+        className="flex w-full flex-col text-sm"
       >
         <label htmlFor="email" className="sr-only">
           이메일
@@ -45,13 +44,19 @@ const LoginForm = () => {
           id="email"
           type="email"
           placeholder="이메일을 입력해 주세요."
-          className="border"
+          className={`form-input mb-2 border ${
+            errors.email
+              ? "border-red-500 placeholder:text-white"
+              : "border-gray-300"
+          } bg-transparent text-white placeholder:text-white`}
           {...register("email", {
             required: "이메일을 입력해 주세요.",
           })}
           onFocus={handleFocus}
         />
-        {errors.email && <p>{errors.email.message}</p>}
+        {errors.email && (
+          <p className="mb-4 text-red-500">{errors.email.message}</p>
+        )}
         <label htmlFor="password" className="sr-only">
           비밀번호
         </label>
@@ -59,7 +64,9 @@ const LoginForm = () => {
           id="password"
           type="password"
           placeholder="비밀번호를 입력해 주세요."
-          className="border"
+          className={`form-input border ${
+            errors.password ? "border-red-500" : "border-gray-300"
+          } bg-transparent text-white placeholder:text-white`}
           {...register("password", {
             required: "비밀번호를 입력해 주세요.",
             minLength: {
@@ -73,12 +80,14 @@ const LoginForm = () => {
           })}
           onFocus={handleFocus}
         />
-        {errors.password && <p>{errors.password.message}</p>}
-        {error && <p>{error}</p>}
+        {errors.password && (
+          <p className="mt-2 text-red-500">{errors.password.message}</p>
+        )}
+        {error && <p className="text-red-500">{error}</p>}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-primary text-primary-foreground"
+          className="button-shape my-6 bg-primary font-bold text-primary-foreground"
         >
           로그인
         </button>

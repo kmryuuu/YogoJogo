@@ -17,6 +17,12 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        suit: ["SUIT Variable", "sans-serif"],
+      },
+      height: {
+        "calc-100vh-192": "calc(100vh - 192px)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
