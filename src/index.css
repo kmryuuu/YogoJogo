@@ -72,5 +72,31 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "SUIT Variable", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply font-bold;
+    font-family: "SUIT Variable", sans-serif;
+  }
+}
+
+@layer components {
+  .bg-login {
+    background-image: url("@/assets/images/login-bg.png");
+    background-size: cover;
+    background-position: center;
+  }
+
+  .form-input {
+    @apply w-full rounded-lg border p-4;
+  }
+
+  .button-shape {
+    @apply w-full rounded-lg p-4;
   }
 }

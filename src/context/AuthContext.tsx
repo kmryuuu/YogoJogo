@@ -11,7 +11,7 @@ import {
 interface AuthContextProps {
   user: User | null;
   signup: (email: string, password: string) => Promise<string | void>;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   error: string | null;
   resetError: () => void;
@@ -25,7 +25,17 @@ interface AuthError {
   code: string;
   message: string;
 }
-const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+const initialState: AuthContextProps = {
+  user: null,
+  signup: () => Promise.resolve(undefined),
+  login: () => Promise.resolve(false),
+  logout: () => Promise.resolve(),
+  error: null,
+  resetError: () => {},
+};
+
+const AuthContext = createContext<AuthContextProps>(initialState);
 
 const errorMessage = (code: string) => {
   switch (code) {
@@ -83,9 +93,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setError(null);
+      return true;
     } catch (error) {
       const authError = error as AuthError;
       setError(errorMessage(authError.code));
+      return false;
     }
   };
 
