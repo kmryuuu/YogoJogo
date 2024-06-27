@@ -1,5 +1,6 @@
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormInputs {
   email: string;
@@ -15,9 +16,13 @@ const LoginForm = () => {
   } = useForm<LoginFormInputs>();
 
   const { login, user, error, resetError } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
     login(data.email, data.password);
+    if (!error) {
+      navigate("/");
+    }
   };
 
   const handleFocus = () => {
