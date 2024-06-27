@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import Home from "@/pages/Common/Home";
 import Login from "@/pages/Common/Login";
 import SignUp from "@/pages/Common/SignUp";
@@ -15,7 +15,7 @@ import CreateProduct from "@/pages/Admin/CreateProduct";
 import Error from "@/pages/Common/Error";
 import Layout from "@/layout/Layout";
 
-const router = createBrowserRouter([
+const routes = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
@@ -50,8 +50,5 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-const Router = () => {
-  return <RouterProvider router={router} />;
-};
 
-export default Router;
+export default routes;
