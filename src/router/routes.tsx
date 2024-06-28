@@ -14,6 +14,7 @@ import Inventory from "@/pages/Admin/Inventory";
 import CreateProduct from "@/pages/Admin/CreateProduct";
 import Error from "@/pages/Common/Error";
 import Layout from "@/layout/Layout";
+import ProtectedRoutes from "@/router/ProtectedRoutes";
 
 const routes = createBrowserRouter([
   {
@@ -29,10 +30,21 @@ const routes = createBrowserRouter([
       { path: "signup", element: <SignUp /> },
       { path: "category", element: <ProductList /> },
       { path: "product", element: <ProductDetail /> },
-      { path: "cart", element: <Cart /> },
+      {
+        path: "cart",
+        element: (
+          <ProtectedRoutes>
+            <Cart />
+          </ProtectedRoutes>
+        ),
+      },
       {
         path: "mypage",
-        element: <MyPage />,
+        element: (
+          <ProtectedRoutes>
+            <MyPage />
+          </ProtectedRoutes>
+        ),
         children: [
           { path: "profile", element: <ProfileEdit /> },
           { path: "history", element: <OrderHistory /> },
@@ -41,7 +53,11 @@ const routes = createBrowserRouter([
       },
       {
         path: "orders",
-        element: <Orders />,
+        element: (
+          <ProtectedRoutes>
+            <Orders />
+          </ProtectedRoutes>
+        ),
         children: [
           { path: "inventory", element: <Inventory /> },
           { path: "create", element: <CreateProduct /> },

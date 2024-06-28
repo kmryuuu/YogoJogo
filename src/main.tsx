@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
-import routes from "./routes";
+import routes from "./router/routes";
 import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
 

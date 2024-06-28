@@ -53,7 +53,7 @@ const SignUpForm = () => {
           id="name"
           type="text"
           placeholder="이름을 입력해 주세요."
-          className="form-input placeholder:text-fontColor-lightGray my-2 border"
+          className="form-input my-2 border placeholder:text-fontColor-lightGray"
           {...register("name", {
             required: "이름을 입력해 주세요.",
             pattern: {
@@ -73,14 +73,14 @@ const SignUpForm = () => {
         {errors.name && (
           <p className="text-xs text-red-500">{errors.name.message}</p>
         )}
-        <label htmlFor="email" className="text-fontColor-darkGray mt-4">
+        <label htmlFor="email" className="mt-4 text-fontColor-darkGray">
           이메일
         </label>
         <input
           id="email"
           type="email"
           placeholder="이메일을 입력해 주세요."
-          className="form-input placeholder:text-fontColor-lightGray my-2 border"
+          className="form-input my-2 border placeholder:text-fontColor-lightGray"
           {...register("email", {
             required: "이메일을 입력해 주세요.",
             pattern: {
@@ -92,17 +92,17 @@ const SignUpForm = () => {
         {errors.email && (
           <p className="text-xs text-red-500">{errors.email.message}</p>
         )}
-        <label htmlFor="password" className="text-fontColor-darkGray mt-4">
+        <label htmlFor="password" className="mt-4 text-fontColor-darkGray">
           비밀번호
         </label>
-        <p className="text-fontColor-midGray my-2 text-xs">
+        <p className="my-2 text-xs text-fontColor-midGray">
           영문, 숫자, 특수문자를 포함하여 8-16자 이내로 입력해 주세요.
         </p>
         <input
           id="password"
           type="password"
           placeholder="비밀번호를 입력해 주세요."
-          className="form-input placeholder:text-fontColor-lightGray my-2 border"
+          className="form-input my-2 border placeholder:text-fontColor-lightGray"
           {...register("password", {
             required: "비밀번호를 입력해 주세요.",
             pattern: {
@@ -125,7 +125,7 @@ const SignUpForm = () => {
         )}
         <label
           htmlFor="passwordConfirm"
-          className="text-fontColor-darkGray mt-4"
+          className="mt-4 text-fontColor-darkGray"
         >
           비밀번호 확인
         </label>
@@ -133,7 +133,7 @@ const SignUpForm = () => {
           id="passwordConfirm"
           type="password"
           placeholder="비밀번호를 한 번 더 입력해 주세요."
-          className="form-input placeholder:text-fontColor-lightGray my-2 border"
+          className="form-input my-2 border placeholder:text-fontColor-lightGray"
           {...register("passwordConfirm", {
             required: "비밀번호를 한 번 더 입력해 주세요.",
             minLength: {
