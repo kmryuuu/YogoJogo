@@ -18,7 +18,7 @@ const Header = () => {
         {user ? (
           <nav>
             {/* 로그인 시 */}
-            <ul className="text-fontColor-darkGray flex items-center gap-6 text-xs">
+            <ul className="flex items-center gap-6 text-xs text-fontColor-darkGray">
               <li>
                 <Link to="/cart">
                   <IConCart />
@@ -37,10 +37,15 @@ const Header = () => {
         ) : (
           <nav>
             {/* 비로그인 시 */}
-            <ul className="text-fontColor-darkGray flex items-center gap-6 text-xs">
+            <ul className="flex items-center gap-6 text-xs text-fontColor-darkGray">
               <li>
                 <Link to="/cart">
                   <IConCart />
+                </Link>
+              </li>
+              <li>
+                <Link to="/mypage">
+                  <IconMyPage />
                 </Link>
               </li>
               <li>
