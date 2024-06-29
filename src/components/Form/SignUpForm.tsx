@@ -1,5 +1,6 @@
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface SignUpFormInputs {
   name: string;
@@ -18,6 +19,7 @@ const SignUpForm = () => {
   } = useForm<SignUpFormInputs>({ mode: "onBlur" });
 
   const { signup, error } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
     const result = await signup(data.email, data.password);
@@ -25,6 +27,8 @@ const SignUpForm = () => {
       setError("email", {
         message: "이미 사용 중인 이메일입니다.",
       });
+    } else {
+      navigate("/");
     }
   };
 

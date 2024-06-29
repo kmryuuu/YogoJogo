@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import IconMyPage from "@/assets/icons/mypage.svg";
 import IConCart from "@/assets/icons/cart.svg";
 import { useContext } from "react";
@@ -6,6 +6,12 @@ import AuthContext from "@/context/AuthContext";
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/"); // 로그아웃 후 홈 페이지로 이동
+  };
 
   return (
     <header>
@@ -30,7 +36,7 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <button onClick={logout}>로그아웃</button>
+                <button onClick={handleLogout}>로그아웃</button>
               </li>
             </ul>
           </nav>
