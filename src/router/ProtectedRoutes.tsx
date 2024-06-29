@@ -1,16 +1,22 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ProtectedRoutesProps {
   children: ReactNode;
 }
 
 const ProtectedRoutes = ({ children }: ProtectedRoutesProps) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  console.log("ProtectedRoutes user:", user);
 
+  if (loading) {
+    return <Spinner />;
+  }
+
+  // 사용자가 로그인되지 않은 경우
   if (!user) {
-    // 사용자가 로그인되지 않은 경우 로그인 페이지로 리디렉션
     return <Navigate to="/login" replace />;
   }
 

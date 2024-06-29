@@ -15,6 +15,7 @@ interface AuthContextProps {
   logout: () => Promise<void>;
   error: string | null;
   resetError: () => void;
+  loading: boolean;
 }
 
 interface AuthProviderProps {
@@ -33,6 +34,7 @@ const initialState: AuthContextProps = {
   logout: () => Promise.resolve(),
   error: null,
   resetError: () => {},
+  loading: true,
 };
 
 const AuthContext = createContext<AuthContextProps>(initialState);
@@ -59,11 +61,14 @@ const errorMessage = (code: string) => {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // 현재 사용자 상태 업데이트
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log("현재 사용자 업데이트", currentUser);
       setUser(currentUser);
+      setLoading(false); // 사용자 정보를 가져온 후 로딩 상태를 false로 설정
     });
     return () => unsubscribe();
   }, []);
@@ -113,7 +118,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, error, signup, login, logout, resetError }}
+      value={{ user, error, signup, login, logout, resetError, loading }}
     >
       {children}
     </AuthContext.Provider>
