@@ -5,8 +5,29 @@ import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   const location = useLocation();
-  const withoutFooterPages = ["/login", "/signup", "/cart"];
-  const isFullScreenPage = location.pathname === "/login";
+  const withoutFooterPages = [
+    "/login",
+    "/signup",
+    "/cart",
+    "/orders",
+    "/orders/orderlist",
+    "/orders/inventory",
+    "/orders/create",
+  ];
+  const withoutHeaderPages = [
+    "/orders",
+    "/orders/orderlist",
+    "/orders/inventory",
+    "/orders/create",
+  ];
+  const fullScreenPages = [
+    "/login",
+    "/orders",
+    "/orders/orderlist",
+    "/orders/inventory",
+    "/orders/create",
+  ];
+  const isFullScreenPage = fullScreenPages.includes(location.pathname);
 
   const containerClass = "min-h-screen flex flex-grow flex-col";
   const mainClass = isFullScreenPage
@@ -16,7 +37,7 @@ const Layout = () => {
   return (
     <div className={containerClass}>
       <div className="mx-auto w-full max-w-screen-xl">
-        <Header />
+        {!withoutHeaderPages.includes(location.pathname) && <Header />}
       </div>
       <main className={mainClass}>
         <Outlet />

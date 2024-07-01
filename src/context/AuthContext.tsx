@@ -1,16 +1,28 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
-import { auth } from "@/firebase";
+import { auth, db } from "@/./utils/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  User,
 } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+interface UserInfo {
+  uid: string;
+  name: string;
+  email: string | null;
+  isAdmin: boolean;
+  createdAt: Date;
+}
 
 interface AuthContextProps {
-  user: User | null;
-  signup: (email: string, password: string) => Promise<string | void>;
+  user: UserInfo | null;
+  isAdmin: boolean;
+  signup: (
+    username: string,
+    email: string,
+    password: string,
+  ) => Promise<string | void>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   error: string | null;
@@ -29,6 +41,7 @@ interface AuthError {
 
 const initialState: AuthContextProps = {
   user: null,
+  isAdmin: false,
   signup: () => Promise.resolve(undefined),
   login: () => Promise.resolve(false),
   logout: () => Promise.resolve(),
@@ -60,15 +73,31 @@ const errorMessage = (code: string) => {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   // 현재 사용자 상태 업데이트
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("현재 사용자 업데이트", currentUser);
-      setUser(currentUser);
-      setLoading(false); // 사용자 정보를 가져온 후 로딩 상태를 false로 설정
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUser({
+            uid: user.uid,
+            name: userData.name,
+            email: user.email,
+            isAdmin: userData.isAdmin || false,
+            createdAt: new Date(),
+          });
+          setIsAdmin(userData.isAdmin || false);
+        }
+      } else {
+        setUser(null);
+        setIsAdmin(false);
+      }
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -79,10 +108,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // 회원가입
-  const signup = async (email: string, password: string) => {
-    console.log("회원가입 정보", email, password);
+  const signup = async (username: string, email: string, password: string) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      // firestore 유저 정보 저장
+      const uid = userCredential.user.uid;
+      await setDoc(doc(db, "users", uid), {
+        username: username,
+        email: userCredential.user.email,
+        isAdmin: false,
+        createdAt: new Date(),
+      });
+      alert("회원가입이 완료되었습니다. 로그인 후 이용해 주세요.");
     } catch (error) {
       const authError = error as AuthError;
       if (authError.code === "auth/email-already-in-use") {
@@ -96,11 +137,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // 로그인
   const login = async (email: string, password: string) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      setError(null);
-      return true;
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const uid = userCredential.user.uid;
+      const userDoc = await getDoc(doc(db, "users", uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUser({
+          uid: userCredential.user.uid,
+          name: userData.name,
+          email: userCredential.user.email,
+          isAdmin: userData.isAdmin || false,
+          createdAt: new Date(),
+        });
+        setIsAdmin(userData.isAdmin || false);
+        setError(null);
+        return true;
+      } else {
+        setError("사용자 정보를 찾을 수 없습니다.");
+        return false;
+      }
     } catch (error) {
       const authError = error as AuthError;
+      console.log(authError);
       setError(errorMessage(authError.code));
       return false;
     }
@@ -111,6 +173,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       await signOut(auth);
       setUser(null);
+      setIsAdmin(false);
     } catch (error) {
       alert("로그아웃에 실패하였습니다.");
     }
@@ -118,7 +181,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, error, signup, login, logout, resetError, loading }}
+      value={{
+        isAdmin,
+        user,
+        error,
+        signup,
+        login,
+        logout,
+        resetError,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>

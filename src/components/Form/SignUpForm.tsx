@@ -22,7 +22,7 @@ const SignUpForm = () => {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
-    const result = await signup(data.email, data.password);
+    const result = await signup(data.name, data.email, data.password);
     if (result === "duplicate email") {
       setError("email", {
         message: "이미 사용 중인 이메일입니다.",

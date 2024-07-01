@@ -10,6 +10,7 @@ import ProfileEdit from "@/pages/User/ProfileEdit";
 import OrderHistory from "@/pages/User/OrderHistory";
 import CancelHistory from "@/pages/User/CancelHistory";
 import Orders from "@/pages/Admin/Orders";
+import OrderList from "@/pages/Admin/OrderList";
 import Inventory from "@/pages/Admin/Inventory";
 import CreateProduct from "@/pages/Admin/CreateProduct";
 import Error from "@/pages/Common/Error";
@@ -54,11 +55,12 @@ const routes = createBrowserRouter([
       {
         path: "orders",
         element: (
-          <ProtectedRoutes>
+          <ProtectedRoutes adminOnly>
             <Orders />
           </ProtectedRoutes>
         ),
         children: [
+          { path: "orderlist", element: <OrderList /> },
           { path: "inventory", element: <Inventory /> },
           { path: "create", element: <CreateProduct /> },
         ],
