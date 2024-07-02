@@ -166,7 +166,7 @@ const SignUpForm = () => {
           className={`bg-primary text-primary-foreground ${
             !isAllFieldsFilled || !isValid || isSubmitting
               ? "button-shape mt-8 cursor-not-allowed bg-slate-200 font-bold text-white"
-              : "button-shape cursor-pointe mt-8 font-bold"
+              : "button-shape cursor-point mt-8 font-bold"
           }`}
         >
           회원가입 완료

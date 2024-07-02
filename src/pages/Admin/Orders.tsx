@@ -1,4 +1,4 @@
-import DashBoard from "@/components/DashBoard/DashBoard";
+import DashBoard from "@/components/Admin/DashBoard";
 import { Outlet } from "react-router-dom";
 
 const Orders = () => {
@@ -7,7 +7,7 @@ const Orders = () => {
       <div className="h-full w-1/4 bg-slate-50">
         <DashBoard />
       </div>
-      <div className="h-full w-3/4 p-4">
+      <div className="h-full w-3/4 px-8">
         <Outlet />
       </div>
     </div>

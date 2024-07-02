@@ -99,4 +99,8 @@
   .button-shape {
     @apply w-full rounded-lg p-4 text-base;
   }
+
+  .border-primary {
+    border: solid 1px #ff7a00;
+  }
 }
