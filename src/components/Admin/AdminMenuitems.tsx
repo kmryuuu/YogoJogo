@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import IconArrowRight from "@/assets/icons/icon-arrow-right.svg";
 
-interface AdminListProps {
+interface AdminMenuitemsProps {
   title: string;
   to: string;
 }
 
-const AdminList = ({ title, to }: AdminListProps) => {
+const AdminMenuitems = ({ title, to }: AdminMenuitemsProps) => {
   return (
     <Link to={to}>
       <div className="mt-6 flex w-full items-center justify-between border-b-2 pb-3">
@@ -17,4 +17,4 @@ const AdminList = ({ title, to }: AdminListProps) => {
   );
 };
 
-export default AdminList;
+export default AdminMenuitems;

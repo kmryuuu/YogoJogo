@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AdminList from "./AdminList";
+import AdminMenuitems from "./AdminMenuitems";
 import AuthContext from "@/context/AuthContext";
 
 const DashBoard = () => {
@@ -16,9 +16,9 @@ const DashBoard = () => {
     <div className="text-bold mx-auto flex h-full max-w-60 flex-col">
       <div>
         <h1 className="my-20 text-xl">관리자 페이지</h1>
-        <AdminList to="/orders/orderlist" title="주문 현황" />
-        <AdminList to="/orders/inventory" title="상품 조회/수정" />
-        <AdminList to="/orders/create" title="상품 등록" />
+        <AdminMenuitems to="/orders/orderlist" title="주문 현황" />
+        <AdminMenuitems to="/orders/inventory" title="상품 조회/수정" />
+        <AdminMenuitems to="/orders/create" title="상품 등록" />
       </div>
       <div className="mt-auto flex flex-col">
         <div className="mb-6 flex w-full cursor-pointer items-center justify-between">

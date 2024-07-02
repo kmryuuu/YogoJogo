@@ -36,7 +36,7 @@ module.exports = {
           darkGray: "rgb(100 116 139)",
         },
         primary: {
-          DEFAULT: "var(--primary)",
+          DEFAULT: "#ff7a00",
           foreground: "var(--primary-foreground)",
         },
         secondary: {
