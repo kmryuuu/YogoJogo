@@ -45,7 +45,7 @@ const Inventory: React.FC = () => {
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-4">
                     <img
-                      src={product.imageUrl}
+                      src={product.images?.[0] || "/placeholder-image.png"}
                       alt={product.title}
                       className="h-20 w-20 rounded object-cover"
                     />
