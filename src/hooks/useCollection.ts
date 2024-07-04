@@ -17,7 +17,6 @@ const useCollection = <T>(collectionName: string) => {
           // T 타입 단언 -> T 타입의 객체
           // 불러온 데이터를 원하는 객체의 타입과 동일하게 맞추기 위해 해당 타입의 객체를 배열에 추가
           dataList.push(doc.data() as T);
-          console.log(doc.data());
         });
         setData(dataList);
       } catch (err) {
