@@ -7,13 +7,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-interface UserInfo {
-  uid: string;
-  name: string;
-  email: string | null;
-  isAdmin: boolean;
-  createdAt: Date;
-}
+import { UserInfo } from "@/interface/interface";
 
 interface AuthContextProps {
   user: UserInfo | null;

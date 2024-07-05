@@ -1,5 +1,13 @@
+export interface UserInfo {
+  uid: string;
+  name: string;
+  email: string | null;
+  isAdmin: boolean;
+  createdAt: Date;
+}
+
 export interface Product {
-  id?: string;
+  id: string;
   category: string;
   title: string;
   price: number;

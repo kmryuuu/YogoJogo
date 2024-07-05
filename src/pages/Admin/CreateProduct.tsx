@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { db, storage } from "@/utils/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc, getDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Product } from "@/types/types";
+import { Product } from "@/interface/interface";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface PreviewImage {
   id: string;
@@ -20,26 +21,50 @@ const categories = [
 ];
 
 const CreateProduct = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const { register, handleSubmit, reset } = useForm<Product>();
   const [selectedImages, setSelectedImages] = useState<PreviewImage[]>([]);
 
-  // 이미지 고유 ID 생성
-  // 파일 첨부 시 같은 파일명도 업로드 하기 위해
-  const generateUniqueId = () => {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  };
+  // 상품 데이터 불러오기 (수정 시)
+  useEffect(() => {
+    if (id) {
+      const fetchProduct = async () => {
+        const productDoc = await getDoc(doc(db, "products", id));
+        if (productDoc.exists()) {
+          const productData = productDoc.data() as Product;
+          // form value 재설정
+          reset(productData);
+          // 이미지 초기값
+          const initialImages = productData.images.map((url, index) => ({
+            id: `${index}`,
+            file: new File([], ""),
+            url,
+          }));
+          setSelectedImages(initialImages);
+        }
+      };
+      fetchProduct();
+    }
+  }, [id, reset]);
 
   // 이미지 선택
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const filesArray = Array.from(e.target.files || []);
 
+    if (selectedImages.length + filesArray.length > 4) {
+      alert("최대 4개의 이미지만 업로드할 수 있습니다.");
+      return;
+    }
+
+    // 이미지 미리보기
     filesArray.forEach((selectedFile) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedImages((prevImages) => [
           ...prevImages,
           {
-            id: generateUniqueId(),
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             file: selectedFile,
             url: reader.result as string,
           },
@@ -56,31 +81,47 @@ const CreateProduct = () => {
     setSelectedImages(deleteImage);
   };
 
-  // 상품 등록
+  // 상품 등록, 수정
   const onSubmit = async (data: Product) => {
     try {
-      // 이미지 업로드
-      const uploadPromises = selectedImages.map(async (image) => {
-        const storageRef = ref(storage, `products/${image.file.name}`);
-        await uploadBytes(storageRef, image.file);
-        return getDownloadURL(storageRef);
-      });
+      // 기존 이미지 URL과 새로 업로드된 이미지 URL 병합
+      const existingUrls = selectedImages
+        .filter((img) => !img.file.name)
+        .map((img) => img.url);
 
-      const imageUrls = await Promise.all(uploadPromises);
+      const newUploadPromises = selectedImages
+        .filter((img) => img.file.name)
+        .map(async (image) => {
+          const storageRef = ref(storage, `products/${image.file.name}`);
+          await uploadBytes(storageRef, image.file);
+          return getDownloadURL(storageRef);
+        });
+
+      const newImageUrls = await Promise.all(newUploadPromises);
+      const imageUrls = [...existingUrls, ...newImageUrls];
 
       // 상품 정보 저장
-      const product: Product = {
+      const product: Partial<Product> = {
         ...data,
         images: imageUrls,
-        createdAt: new Date(),
+        createdAt: id ? data.createdAt : new Date(),
         updatedAt: new Date(),
       };
 
-      await addDoc(collection(db, "products"), product);
+      if (id) {
+        // 상품 수정
+        const productRef = doc(db, "products", id);
+        await updateDoc(productRef, product);
+        alert("상품이 수정되었습니다.");
+      } else {
+        // 새 상품 등록
+        await addDoc(collection(db, "products"), product);
+        alert("상품이 등록되었습니다.");
+      }
 
       reset();
       setSelectedImages([]);
-      alert("상품 등록이 완료되었습니다.");
+      navigate("/orders/inventory");
     } catch (error) {
       console.error("상품 등록 실패:", error);
       alert("상품 등록에 실패했습니다. 다시 시도해주세요.");
@@ -93,7 +134,7 @@ const CreateProduct = () => {
         className="w-full max-w-2xl rounded-lg bg-white"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <h2 className="mb-8 text-lg">상품 등록</h2>
+        <h2 className="mb-8 text-lg">{id ? "상품 수정" : "상품 등록"}</h2>
 
         <div className="mb-6 flex items-center">
           <label className="w-32 text-base font-medium">카테고리</label>
@@ -221,7 +262,7 @@ const CreateProduct = () => {
             type="submit"
             className="w-full max-w-xs rounded-lg bg-primary py-3 font-bold text-white"
           >
-            등록
+            {id ? "수정" : "등록"}
           </button>
         </div>
       </form>

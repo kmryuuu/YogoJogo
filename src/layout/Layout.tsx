@@ -27,7 +27,17 @@ const Layout = () => {
     "/orders/inventory",
     "/orders/create",
   ];
-  const isFullScreenPage = fullScreenPages.includes(location.pathname);
+
+  // 동적 경로도 확인할 수 있도록 includes 사용
+  const isWithoutFooterPage = withoutFooterPages.some((path) =>
+    location.pathname.includes(path),
+  );
+  const isWithoutHeaderPage = withoutHeaderPages.some((path) =>
+    location.pathname.includes(path),
+  );
+  const isFullScreenPage = fullScreenPages.some((path) =>
+    location.pathname.includes(path),
+  );
 
   const containerClass = "min-h-screen flex flex-grow flex-col";
   const mainClass = isFullScreenPage
@@ -37,12 +47,12 @@ const Layout = () => {
   return (
     <div className={containerClass}>
       <div className="mx-auto w-full max-w-screen-xl">
-        {!withoutHeaderPages.includes(location.pathname) && <Header />}
+        {!isWithoutHeaderPage && <Header />}
       </div>
       <main className={mainClass}>
         <Outlet />
       </main>
-      {!withoutFooterPages.includes(location.pathname) && <Footer />}
+      {!isWithoutFooterPage && <Footer />}
     </div>
   );
 };
