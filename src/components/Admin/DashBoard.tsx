@@ -13,7 +13,7 @@ const DashBoard = () => {
   };
 
   return (
-    <div className="text-bold mx-auto flex h-full max-w-60 flex-col">
+    <div className="flex h-full flex-col p-8">
       <div>
         <h1 className="my-20 text-xl">관리자 페이지</h1>
         <AdminMenuitems to="/orders/orderlist" title="주문 현황" />

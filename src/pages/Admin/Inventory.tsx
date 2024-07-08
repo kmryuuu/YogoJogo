@@ -1,31 +1,34 @@
 import { useState, useEffect } from "react";
-import { Product } from "@/interface/interface";
-import useCollection from "@/hooks/useCollection";
 import { db } from "@/utils/firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useInfiniteProducts } from "@/hooks/useProducts";
+import { useInView } from "react-intersection-observer";
+import { FetchProductsResult } from "@/services/productService";
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const {
-    data: initialProducts,
-    loading,
-    error,
-  } = useCollection<Product>("products", "createdAt");
-  const [products, setProducts] = useState<Product[]>([]);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
+    useInfiniteProducts();
+
   const [checkedList, setCheckedList] = useState<string[]>([]);
+  const { ref, inView } = useInView();
 
-  // initialProducts가 변경될 때마다 products 상태를 업데이트
   useEffect(() => {
-    setProducts(initialProducts);
-  }, [initialProducts]);
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
 
-  if (loading) {
+  const products =
+    data?.pages.flatMap((page: FetchProductsResult) => page.products) ?? [];
+
+  if (isFetching && !isFetchingNextPage) {
     return <div className="p-4">Loading...</div>;
   }
 
-  if (error) {
-    return <div className="p-4">Error: {error}</div>;
+  if (!products.length) {
+    return <div className="p-4">No products found.</div>;
   }
 
   // 상품 개별 선택
@@ -57,9 +60,6 @@ const Inventory = () => {
 
       await Promise.all(deletePromises);
       // 삭제되지 않은 리스트 상태 업데이트
-      setProducts(
-        products.filter((product) => !checkedList.includes(product.id!)),
-      );
       setCheckedList([]);
       alert("선택한 상품이 삭제되었습니다.");
     } catch (error) {
@@ -68,7 +68,7 @@ const Inventory = () => {
   };
 
   return (
-    <div>
+    <div className="px-12">
       <h2 className="my-12 text-lg">판매중인 상품</h2>
       <div className="flex flex-col justify-center">
         <p>총 {products.length}개</p>
@@ -132,6 +132,9 @@ const Inventory = () => {
             ))}
           </tbody>
         </table>
+        <div ref={ref} className="loading">
+          {isFetchingNextPage && <div>"Loading more..."</div>}
+        </div>
       </div>
     </div>
   );
