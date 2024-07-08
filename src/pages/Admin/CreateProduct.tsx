@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { db, storage } from "@/utils/firebase";
-import { collection, addDoc, updateDoc, getDoc, doc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Product } from "@/interface/interface";
 import { useNavigate, useParams } from "react-router-dom";
+import { Product } from "@/interface/interface";
+import {
+  getProduct,
+  addProduct,
+  updateProduct,
+  uploadImages,
+} from "@/services/productService";
 
 interface PreviewImage {
   id: string;
@@ -30,19 +33,16 @@ const CreateProduct = () => {
   useEffect(() => {
     if (id) {
       const fetchProduct = async () => {
-        const productDoc = await getDoc(doc(db, "products", id));
-        if (productDoc.exists()) {
-          const productData = productDoc.data() as Product;
-          // form value 재설정
-          reset(productData);
-          // 이미지 초기값
-          const initialImages = productData.images.map((url, index) => ({
-            id: `${index}`,
-            file: new File([], ""),
-            url,
-          }));
-          setSelectedImages(initialImages);
-        }
+        const productData = await getProduct(id);
+        // form value 재설정
+        reset(productData);
+        // 이미지 초기값
+        const initialImages = productData.images.map((url, index) => ({
+          id: `${index}`,
+          file: new File([], ""),
+          url,
+        }));
+        setSelectedImages(initialImages);
       };
       fetchProduct();
     }
@@ -84,20 +84,15 @@ const CreateProduct = () => {
   // 상품 등록, 수정
   const onSubmit = async (data: Product) => {
     try {
-      // 기존 이미지 URL과 새로 업로드된 이미지 URL 병합
+      // 상품 수정 시 기존 이미지 URL과 새로 업로드된 이미지 URL 병합
       const existingUrls = selectedImages
         .filter((img) => !img.file.name)
         .map((img) => img.url);
 
-      const newUploadPromises = selectedImages
+      const newImages = selectedImages
         .filter((img) => img.file.name)
-        .map(async (image) => {
-          const storageRef = ref(storage, `products/${image.file.name}`);
-          await uploadBytes(storageRef, image.file);
-          return getDownloadURL(storageRef);
-        });
-
-      const newImageUrls = await Promise.all(newUploadPromises);
+        .map((img) => img.file);
+      const newImageUrls = await uploadImages(newImages);
       const imageUrls = [...existingUrls, ...newImageUrls];
 
       // 상품 정보 저장
@@ -110,12 +105,11 @@ const CreateProduct = () => {
 
       if (id) {
         // 상품 수정
-        const productRef = doc(db, "products", id);
-        await updateDoc(productRef, product);
+        await updateProduct(id, product);
         alert("상품이 수정되었습니다.");
       } else {
         // 새 상품 등록
-        await addDoc(collection(db, "products"), product);
+        await addProduct(product);
         alert("상품이 등록되었습니다.");
       }
 
@@ -123,7 +117,6 @@ const CreateProduct = () => {
       setSelectedImages([]);
       navigate("/orders/inventory");
     } catch (error) {
-      console.error("상품 등록 실패:", error);
       alert("상품 등록에 실패했습니다. 다시 시도해주세요.");
     }
   };
