@@ -3,7 +3,7 @@ import LoginForm from "@/components/Form/LoginForm";
 
 const Login = () => {
   return (
-    <div className="bg-login flex h-full items-center justify-center">
+    <div className="bg-login flex h-full min-h-screen items-center justify-center">
       <div className="flex w-full max-w-sm flex-col items-center px-4">
         <h2 className="mb-8 text-2xl font-bold text-white">이메일로 로그인</h2>
         <LoginForm />

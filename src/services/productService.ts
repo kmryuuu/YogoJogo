@@ -13,42 +13,72 @@ import {
   getDocs,
   DocumentData,
   QueryDocumentSnapshot,
+  where,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Product } from "@/interface/interface";
 
 // firebase 커서 기반의 페이지 네이션
-const PRODUCTS_PER_PAGE = 5;
-
 export interface FetchProductsResult {
   products: Product[];
   nextCursor: QueryDocumentSnapshot<DocumentData> | null;
 }
 
+const PAGE_SIZE = 10;
+
 export const fetchProducts = async ({
+  category,
+  sortOption,
   pageParam = null,
 }: {
+  category?: string;
+  sortOption?: string;
   pageParam?: QueryDocumentSnapshot<DocumentData> | null;
 }): Promise<FetchProductsResult> => {
-  const productQuery = pageParam
-    ? query(
-        collection(db, "products"),
-        orderBy("createdAt"),
-        startAfter(pageParam),
-        limit(PRODUCTS_PER_PAGE),
-      )
-    : query(
-        collection(db, "products"),
-        orderBy("createdAt"),
-        limit(PRODUCTS_PER_PAGE),
-      );
+  console.log("Fetching products for category:", category);
+
+  const collectionRef = collection(db, "products");
+  let productQuery = query(collectionRef);
+
+  if (category !== "allproducts") {
+    productQuery = query(productQuery, where("category", "==", category));
+    console.log("Category filter applied:", category);
+  }
+
+  switch (sortOption) {
+    case "lowest":
+      productQuery = query(productQuery, orderBy("price", "asc"));
+      break;
+    case "highest":
+      productQuery = query(productQuery, orderBy("price", "desc"));
+      break;
+    default:
+      productQuery = query(productQuery, orderBy("createdAt", "desc"));
+      break;
+  }
+
+  if (pageParam) {
+    productQuery = query(productQuery, startAfter(pageParam));
+  }
+
+  productQuery = query(productQuery, limit(PAGE_SIZE));
 
   const productSnapshot = await getDocs(productQuery);
   const lastVisible =
     productSnapshot.docs[productSnapshot.docs.length - 1] || null;
-  const products = productSnapshot.docs.map(
-    (doc) => ({ id: doc.id, ...doc.data() }) as Product,
-  );
+  const products = productSnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      price:
+        typeof data.price === "string"
+          ? parseFloat(data.price.replace(/,/g, ""))
+          : data.price,
+    } as Product;
+  });
+
+  console.log("Fetched products:", products);
 
   return { products, nextCursor: lastVisible };
 };
@@ -70,7 +100,7 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
   await updateDoc(productRef, product);
 };
 
-export const deleteProductById = async (id: string) => {
+export const deleteProduct = async (id: string) => {
   const productRef = doc(db, "products", id);
   await deleteDoc(productRef);
 };

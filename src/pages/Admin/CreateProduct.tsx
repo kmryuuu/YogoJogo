@@ -16,11 +16,11 @@ interface PreviewImage {
 }
 
 const categories = [
-  { id: "season", name: "제철상품" },
-  { id: "fruit", name: "과일" },
-  { id: "vagetable", name: "채소" },
-  { id: "meat", name: "축산・정육" },
-  { id: "seafood", name: "수산・해산" },
+  { id: "seasonal", name: "제철 음식", value: "seasonal" },
+  { id: "fruits", name: "과일", value: "fruits" },
+  { id: "vegetables", name: "채소", value: "vegetables" },
+  { id: "meat", name: "축산・정육", value: "meat" },
+  { id: "seafood", name: "수산・해산", value: "seafood" },
 ];
 
 const CreateProduct = () => {
@@ -137,7 +137,7 @@ const CreateProduct = () => {
                 <input
                   type="radio"
                   id={category.id}
-                  value={category.name}
+                  value={category.value}
                   {...register("category", { required: true })}
                   className="peer hidden"
                 />
