@@ -5,5 +5,6 @@
   "tabWidth": 2,
   "trailingComma": "all",
   "jsxBracketSameLine": false,
+  "quoteProps": "preserve",
   "plugins": ["prettier-plugin-tailwindcss"]
 }

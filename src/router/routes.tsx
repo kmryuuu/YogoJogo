@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "@/pages/Common/Home";
 import Login from "@/pages/Common/Login";
 import SignUp from "@/pages/Common/SignUp";
-import ProductList from "@/pages/Common/ProductList";
+import ProductList from "@/pages/Admin/ProductList";
 import ProductDetail from "@/pages/Common/ProductDetail";
 import Cart from "@/pages/Common/Cart";
 import MyPage from "@/pages/User/MyPage";
@@ -11,11 +11,11 @@ import OrderHistory from "@/pages/User/OrderHistory";
 import CancelHistory from "@/pages/User/CancelHistory";
 import Orders from "@/pages/Admin/Orders";
 import OrderList from "@/pages/Admin/OrderList";
-import Inventory from "@/pages/Admin/Inventory";
 import CreateProduct from "@/pages/Admin/CreateProduct";
 import Error from "@/pages/Common/Error";
 import Layout from "@/layout/Layout";
 import ProtectedRoutes from "@/router/ProtectedRoutes";
+import Category from "@/pages/Common/Category";
 
 const routes = createBrowserRouter([
   {
@@ -29,7 +29,7 @@ const routes = createBrowserRouter([
       },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
-      { path: "category", element: <ProductList /> },
+      { path: "category/:category", element: <Category /> },
       { path: "product", element: <ProductDetail /> },
       {
         path: "cart",
@@ -61,7 +61,7 @@ const routes = createBrowserRouter([
         ),
         children: [
           { path: "orderlist", element: <OrderList /> },
-          { path: "inventory", element: <Inventory /> },
+          { path: "inventory", element: <ProductList /> },
           { path: "create", element: <CreateProduct /> },
           { path: "edit/:id", element: <CreateProduct /> },
         ],

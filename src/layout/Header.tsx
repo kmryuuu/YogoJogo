@@ -19,7 +19,7 @@ const Header = () => {
 
   return (
     <header>
-      <div className="flex h-16 w-full items-center justify-between px-4">
+      <div className="mx-auto flex h-16 w-full max-w-screen-xl items-center justify-between">
         <div>
           <Link to="/">
             <h1>LOGO</h1>
@@ -53,6 +53,30 @@ const Header = () => {
               ) : (
                 <button onClick={handleLogin}>로그인</button>
               )}
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div className="w-full border-b border-t">
+        <nav className="mx-auto max-w-screen-xl py-3">
+          <ul className="flex items-center gap-8 text-sm text-gray-500">
+            <li>
+              <Link to="/category/allproducts">전체 상품</Link>
+            </li>
+            <li>
+              <Link to="/category/seasonal">제철 음식</Link>
+            </li>
+            <li>
+              <Link to="/category/fruits">과일</Link>
+            </li>
+            <li>
+              <Link to="/category/vegetables">채소</Link>
+            </li>
+            <li>
+              <Link to="/category/meat">축산 ・ 정육</Link>
+            </li>
+            <li>
+              <Link to="/category/seafood">수산 ・ 해산</Link>
             </li>
           </ul>
         </nav>
