@@ -12,9 +12,9 @@ const AdminMenuitems = ({ title, to }: AdminMenuitemsProps) => {
     <Link to={to} className="mt-6 block">
       <Button
         variant="ghost"
-        className="flex w-full items-center justify-between p-3"
+        className="flex w-full items-center justify-between"
       >
-        <p className="font-medium">{title}</p>
+        <p className="text-base font-medium">{title}</p>
         <IconArrowRight />
       </Button>
     </Link>

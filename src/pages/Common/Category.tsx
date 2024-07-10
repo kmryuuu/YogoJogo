@@ -38,12 +38,19 @@ const Category = () => {
 
   const products = data?.pages.flatMap((page) => page.products) ?? [];
 
-  console.log("Category:", category);
-  console.log("Products data:", products);
-
   const handleSortChange = (value: string) => {
     setSortOption(value);
   };
+
+  const sortedProducts = [...products].sort((a, b) => {
+    if (sortOption === "lowest") {
+      return a.price - b.price;
+    } else if (sortOption === "highest") {
+      return b.price - a.price;
+    } else {
+      return 0;
+    }
+  });
 
   return (
     <div className="mt-10">
@@ -66,15 +73,17 @@ const Category = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="mt-4 grid grid-cols-4 gap-4">
-        {products.map((product) => (
-          <div key={product.id} className="rounded-md border p-4">
+      <div className="mt-4 grid grid-cols-5 gap-6">
+        {sortedProducts.map((product) => (
+          <div key={product.id} className="rounded-md">
             <img
               src={product.images[0]}
-              className="mb-2 h-32 w-full rounded-md object-cover"
+              className="mb-3 h-72 w-full rounded-md object-cover"
             />
-            <h3 className="text-sm font-semibold">{product.title}</h3>
-            <p className="text-sm">{product.price.toLocaleString("ko-KR")}원</p>
+            <h3 className="text-md mb-1 font-normal">{product.title}</h3>
+            <p className="text-lg font-bold">
+              {product.price.toLocaleString("ko-KR")}원
+            </p>
           </div>
         ))}
       </div>

@@ -1,9 +1,6 @@
-// pages/Admin/ProductList.tsx
-
 import { useState, useEffect } from "react";
 import { db } from "@/utils/firebase";
 import { deleteDoc, doc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 import { useInfiniteProducts } from "@/hooks/useProducts";
 import { useInView } from "react-intersection-observer";
 import { FetchProductsResult } from "@/services/productService";
@@ -14,6 +11,16 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCaption,
+} from "@/components/ui/table";
+import ProductItem from "@/components/Product/ProductItem";
 
 const categories = [
   { id: "allproducts", name: "전체 상품" },
@@ -25,11 +32,16 @@ const categories = [
 ];
 
 const ProductList = () => {
-  const navigate = useNavigate();
   const [category, setCategory] = useState("allproducts");
   const sortOption = "newest"; // 기본 정렬 옵션
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
-    useInfiniteProducts(category, sortOption);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetching,
+    refetch,
+  } = useInfiniteProducts(category, sortOption);
 
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const { ref, inView } = useInView();
@@ -39,6 +51,10 @@ const ProductList = () => {
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    refetch();
+  }, [category, refetch]);
 
   const products =
     data?.pages.flatMap((page: FetchProductsResult) => page.products) ?? [];
@@ -112,10 +128,10 @@ const ProductList = () => {
             </Select>
           </div>
         </div>
-        <table className="mt-4 w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-slate-100">
-              <th className="text-center">
+        <Table className="mt-4">
+          <TableHeader className="bg-slate-100">
+            <TableRow>
+              <TableHead className="text-center">
                 <input
                   type="checkbox"
                   onChange={(e) => onCheckedAll(e.target.checked)}
@@ -124,60 +140,36 @@ const ProductList = () => {
                     checkedList.length === products.length
                   }
                 />
-              </th>
-              <th className="px-4 py-2">상품 정보</th>
-              <th className="px-4 py-2">분류</th>
-              <th className="px-4 py-2">판매가</th>
-              <th className="px-4 py-2">수량</th>
-              <th className="px-4 py-2">관리</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.length ? (
+              </TableHead>
+              <TableHead className="px-4 py-2 text-center">상품 정보</TableHead>
+              <TableHead className="px-4 py-2 text-center">분류</TableHead>
+              <TableHead className="px-4 py-2 text-center">판매가</TableHead>
+              <TableHead className="px-4 py-2 text-center">수량</TableHead>
+              <TableHead className="px-4 py-2 text-center">관리</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableCaption className="my-8">
+            판매중인 상품 목록입니다.
+          </TableCaption>
+          <TableBody>
+            {products.length > 0 ? (
               products.map((product) => (
-                <tr key={product.id}>
-                  <td className="px-4 py-2 text-center">
-                    <input
-                      type="checkbox"
-                      onChange={(e) => {
-                        onCheckedItem(product.id, e.target.checked);
-                      }}
-                      checked={checkedList.includes(product.id)}
-                    />
-                  </td>
-                  <td className="px-4 py-2">
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={product.images?.[0] || "/placeholder-image.png"}
-                        alt={product.title}
-                        className="h-20 w-20 rounded object-cover"
-                      />
-                      <p>{product.title}</p>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 text-center">{product.category}</td>
-                  <td className="px-4 py-2 text-center">{product.price}원</td>
-                  <td className="px-4 py-2 text-center">{product.quantity}</td>
-                  <td className="px-4 py-2 text-center">
-                    <Button
-                      variant="outline"
-                      className="border px-3 py-1"
-                      onClick={() => navigate(`/orders/edit/${product.id}`)}
-                    >
-                      수정
-                    </Button>
-                  </td>
-                </tr>
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  onCheckedItem={onCheckedItem}
+                  checked={checkedList.includes(product.id)}
+                />
               ))
             ) : (
-              <tr>
-                <td colSpan={6} className="px-4 py-2 text-center">
+              <TableRow>
+                <TableCell colSpan={6} className="px-4 py-2 text-center">
                   <p className="mt-6">판매중인 상품이 없습니다.</p>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
         <div ref={ref} className="loading">
           {isFetchingNextPage && <div>"Loading more..."</div>}
         </div>
