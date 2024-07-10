@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Product } from "@/interface/interface";
 import { TableRow, TableCell } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 interface ProductItemProps {
   product: Product;
@@ -42,12 +43,13 @@ const ProductItem = ({ product, onCheckedItem, checked }: ProductItemProps) => {
         {product.quantity}
       </TableCell>
       <TableCell className="px-4 py-2 text-center align-middle">
-        <button
+        <Button
+          variant="outline"
           className="border px-2 py-1"
           onClick={() => navigate(`/orders/edit/${product.id}`)}
         >
           수정
-        </button>
+        </Button>
       </TableCell>
     </TableRow>
   );

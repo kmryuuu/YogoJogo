@@ -37,8 +37,7 @@ export const fetchProducts = async ({
 }): Promise<FetchProductsResult> => {
   console.log("Fetching products for category:", category);
 
-  const collectionRef = collection(db, "products");
-  let productQuery = query(collectionRef);
+  let productQuery = query(collection(db, "products"));
 
   if (category !== "allproducts") {
     productQuery = query(productQuery, where("category", "==", category));

@@ -5,8 +5,19 @@ import { useContext } from "react";
 import AuthContext from "@/context/AuthContext";
 
 const Header = () => {
-  const { user, logout, isAdmin } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { user, logout, isAdmin } = useContext(AuthContext);
+
+  const categoryMap: { [key: string]: string } = {
+    "전체상품": "allproducts",
+    "제철상품": "seasonal",
+    "과일": "fruits",
+    "채소": "vegetables",
+    "축산": "meat",
+    "수산": "seafood",
+  };
+
+  const categories = Object.keys(categoryMap);
 
   const handleLogout = async () => {
     await logout();
@@ -60,24 +71,13 @@ const Header = () => {
       <div className="w-full border-b border-t">
         <nav className="mx-auto max-w-screen-xl py-3">
           <ul className="flex items-center gap-8 text-sm text-gray-500">
-            <li>
-              <Link to="/category/allproducts">전체 상품</Link>
-            </li>
-            <li>
-              <Link to="/category/seasonal">제철 음식</Link>
-            </li>
-            <li>
-              <Link to="/category/fruits">과일</Link>
-            </li>
-            <li>
-              <Link to="/category/vegetables">채소</Link>
-            </li>
-            <li>
-              <Link to="/category/meat">축산 ・ 정육</Link>
-            </li>
-            <li>
-              <Link to="/category/seafood">수산 ・ 해산</Link>
-            </li>
+            {categories.map((category) => (
+              <li key={category}>
+                <Link to={`/category/${categoryMap[category]}`}>
+                  {category}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>
