@@ -31,17 +31,14 @@ export const fetchProducts = async ({
   sortOption,
   pageParam = null,
 }: {
-  category?: string;
+  category: string;
   sortOption?: string;
   pageParam?: QueryDocumentSnapshot<DocumentData> | null;
 }): Promise<FetchProductsResult> => {
-  console.log("Fetching products for category:", category);
-
   let productQuery = query(collection(db, "products"));
 
-  if (category !== "allproducts") {
+  if (category && category !== "allproducts") {
     productQuery = query(productQuery, where("category", "==", category));
-    console.log("Category filter applied:", category);
   }
 
   switch (sortOption) {
@@ -62,24 +59,27 @@ export const fetchProducts = async ({
 
   productQuery = query(productQuery, limit(PAGE_SIZE));
 
-  const productSnapshot = await getDocs(productQuery);
-  const lastVisible =
-    productSnapshot.docs[productSnapshot.docs.length - 1] || null;
-  const products = productSnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      ...data,
-      price:
-        typeof data.price === "string"
-          ? parseFloat(data.price.replace(/,/g, ""))
-          : data.price,
-    } as Product;
-  });
+  try {
+    const productSnapshot = await getDocs(productQuery);
+    const lastVisible =
+      productSnapshot.docs[productSnapshot.docs.length - 1] || null;
+    const products = productSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        price:
+          typeof data.price === "string"
+            ? parseFloat(data.price.replace(/,/g, ""))
+            : data.price,
+      } as Product;
+    });
 
-  console.log("Fetched products:", products);
-
-  return { products, nextCursor: lastVisible };
+    return { products, nextCursor: lastVisible };
+  } catch (error) {
+    console.error("Error fetching products: ", error);
+    return { products: [], nextCursor: null };
+  }
 };
 
 export const getProduct = async (id: string): Promise<Product> => {

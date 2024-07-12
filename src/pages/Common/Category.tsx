@@ -1,8 +1,5 @@
-// components/Category.tsx
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useInfiniteProducts } from "@/hooks/useProducts";
 import { useInView } from "react-intersection-observer";
 import {
   Select,
@@ -10,6 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { useInfiniteProducts } from "@/hooks/useProducts"; // useInfiniteProducts 훅 경로 확인 필요
 
 const categoryData = {
   seasonal: {
@@ -26,9 +24,10 @@ const Category = () => {
   const { category } = useParams<{ category: string }>();
   const categoryInfo = categoryData[category as keyof typeof categoryData];
   const [sortOption, setSortOption] = useState("newest");
+  const { ref, inView } = useInView();
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts(category ?? "allproducts", sortOption);
-  const { ref, inView } = useInView();
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -42,6 +41,7 @@ const Category = () => {
     setSortOption(value);
   };
 
+  // 정렬 옵션에 따라 제품 정렬
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOption === "lowest") {
       return a.price - b.price;
@@ -73,7 +73,7 @@ const Category = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="mt-4 grid grid-cols-5 gap-6">
+      <div className="mt-4 grid grid-cols-4 gap-6">
         {sortedProducts.map((product) => (
           <div key={product.id} className="rounded-md">
             <img
