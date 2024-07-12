@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import ProductItem from "@/components/Product/ProductItem";
 
-const categories = [
+const categoriesList = [
   { id: "allproducts", name: "전체 상품" },
   { id: "seasonal", name: "제철 음식" },
   { id: "fruits", name: "과일" },
@@ -33,7 +33,8 @@ const categories = [
 
 const ProductList = () => {
   const [category, setCategory] = useState("allproducts");
-  const sortOption = "newest"; // 기본 정렬 옵션
+  const sortOption = "newest";
+
   const {
     data,
     fetchNextPage,
@@ -119,7 +120,7 @@ const ProductList = () => {
                 <span>카테고리 분류</span>
               </SelectTrigger>
               <SelectContent>
-                {categories.map((item) => (
+                {categoriesList.map((item) => (
                   <SelectItem key={item.id} value={item.id}>
                     {item.name}
                   </SelectItem>

@@ -8,7 +8,7 @@ export interface UserInfo {
 
 export interface Product {
   id: string;
-  category: string;
+  category: string[];
   title: string;
   price: number;
   quantity: number;
