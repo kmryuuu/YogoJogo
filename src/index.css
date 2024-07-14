@@ -72,7 +72,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "SUIT Variable", sans-serif;
+    font-family: "Pretendard Variable", sans-serif;
   }
 
   h1,
@@ -81,11 +81,17 @@
   h4,
   h5 {
     @apply font-bold;
-    font-family: "SUIT Variable", sans-serif;
+    font-family: "Pretendard Variable", sans-serif;
   }
 }
 
 @layer components {
+  .bg-main-slide {
+    background-image: url("@/assets/images/bg-main-slide.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
   .bg-login {
     background-image: url("@/assets/images/bg-login.png");
     background-size: cover;
@@ -102,5 +108,47 @@
 
   .border-primary {
     border: solid 1px #ff7a00;
+  }
+
+  .product-img-height {
+    max-height: 460px;
+  }
+
+  .product-img-width {
+    max-width: 460px;
+  }
+
+  .embla {
+    @apply mx-auto;
+    --slide-height: 19rem;
+    --slide-spacing: 1rem;
+    --slide-size: 25%;
+  }
+
+  .embla__viewport {
+    @apply overflow-hidden;
+  }
+
+  .embla__container {
+    @apply backface-hidden flex touch-pan-y touch-pinch-zoom;
+    margin-left: calc(var(--slide-spacing) * -1);
+  }
+
+  .embla__slide {
+    @apply min-w-0 flex-none;
+    flex: 0 0 var(--slide-size);
+    padding-left: var(--slide-spacing);
+  }
+}
+
+@layer utilities {
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+  .touch-pinch-zoom {
+    touch-action: pinch-zoom;
   }
 }

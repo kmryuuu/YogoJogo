@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import {
   Select,
@@ -41,7 +41,6 @@ const Category = () => {
     setSortOption(value);
   };
 
-  // 정렬 옵션에 따라 제품 정렬
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOption === "lowest") {
       return a.price - b.price;
@@ -73,18 +72,22 @@ const Category = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="mt-4 grid grid-cols-4 gap-6">
+      <div className="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
         {sortedProducts.map((product) => (
-          <div key={product.id} className="rounded-md">
-            <img
-              src={product.images[0]}
-              className="mb-3 h-72 w-full rounded-md object-cover"
-            />
-            <h3 className="text-md mb-1 font-normal">{product.title}</h3>
-            <p className="text-lg font-bold">
-              {product.price.toLocaleString("ko-KR")}원
-            </p>
-          </div>
+          <Link to={`/product/${product.id}`}>
+            <div key={product.id} className="rounded-md">
+              <div className="relative aspect-square w-full">
+                <img
+                  src={product.images[0]}
+                  className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
+                />
+              </div>
+              <h3 className="text-md mb-1 mt-3 font-normal">{product.title}</h3>
+              <p className="text-lg font-bold">
+                {product.price.toLocaleString("ko-KR")}원
+              </p>
+            </div>
+          </Link>
         ))}
       </div>
       <div ref={ref} className="loading">

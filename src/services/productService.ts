@@ -77,7 +77,6 @@ export const fetchProducts = async ({
 
     return { products, nextCursor: lastVisible };
   } catch (error) {
-    console.error("Error fetching products: ", error);
     return { products: [], nextCursor: null };
   }
 };

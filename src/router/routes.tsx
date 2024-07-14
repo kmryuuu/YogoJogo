@@ -30,7 +30,7 @@ const routes = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
       { path: "category/:category", element: <Category /> },
-      { path: "product", element: <ProductDetail /> },
+      { path: "product/:id", element: <ProductDetail /> },
       {
         path: "cart",
         element: (
