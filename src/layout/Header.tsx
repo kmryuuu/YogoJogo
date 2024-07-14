@@ -30,7 +30,7 @@ const Header = () => {
 
   return (
     <header>
-      <div className="mx-auto flex h-16 w-full max-w-screen-xl items-center justify-between">
+      <div className="mx-auto flex h-16 w-full max-w-screen-lg items-center justify-between">
         <div>
           <Link to="/">
             <h1>LOGO</h1>
@@ -69,7 +69,7 @@ const Header = () => {
         </nav>
       </div>
       <div className="w-full border-b border-t">
-        <nav className="mx-auto max-w-screen-xl py-3">
+        <nav className="mx-auto max-w-screen-lg py-3">
           <ul className="flex items-center gap-8 text-sm text-gray-500">
             {categories.map((category) => (
               <li key={category}>

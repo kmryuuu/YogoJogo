@@ -21,6 +21,7 @@ const Layout = () => {
     "/orders/create",
   ];
   const fullScreenPages = [
+    "/",
     "/login",
     "/orders",
     "/orders/orderlist",
@@ -28,20 +29,20 @@ const Layout = () => {
     "/orders/create",
   ];
 
-  const isWithoutFooterPage = withoutFooterPages.some((path) =>
-    location.pathname.includes(path),
+  const isWithoutFooterPage = withoutFooterPages.some(
+    (path) => location.pathname === path,
   );
-  const isWithoutHeaderPage = withoutHeaderPages.some((path) =>
-    location.pathname.includes(path),
+  const isWithoutHeaderPage = withoutHeaderPages.some(
+    (path) => location.pathname === path,
   );
-  const isFullScreenPage = fullScreenPages.some((path) =>
-    location.pathname.includes(path),
+  const isFullScreenPage = fullScreenPages.some(
+    (path) => location.pathname === path,
   );
 
   const containerClass = "min-h-screen flex flex-col";
   const mainClass = isFullScreenPage
     ? "flex-grow flex flex-col w-full"
-    : "flex-grow flex flex-col w-full max-w-screen-xl mx-auto";
+    : "flex-grow flex flex-col w-full max-w-screen-lg mx-auto";
 
   return (
     <div className={containerClass}>
