@@ -24,7 +24,7 @@ export interface FetchProductsResult {
   nextCursor: QueryDocumentSnapshot<DocumentData> | null;
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
 
 export const fetchProducts = async ({
   category,

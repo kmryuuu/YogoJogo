@@ -28,6 +28,11 @@ const Header = () => {
     navigate("/login"); // 로그인 페이지로 이동
   };
 
+  const showCategories =
+    location.pathname === "/" ||
+    location.pathname.startsWith("/product/") ||
+    location.pathname.startsWith("/category/");
+
   return (
     <header>
       <div className="mx-auto flex h-16 w-full max-w-screen-lg items-center justify-between">
@@ -68,19 +73,21 @@ const Header = () => {
           </ul>
         </nav>
       </div>
-      <div className="w-full border-b border-t">
-        <nav className="mx-auto max-w-screen-lg py-3">
-          <ul className="flex items-center gap-8 text-sm text-gray-500">
-            {categories.map((category) => (
-              <li key={category}>
-                <Link to={`/category/${categoryMap[category]}`}>
-                  {category}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+      {showCategories && (
+        <div className="w-full border-b border-t">
+          <nav className="mx-auto max-w-screen-lg py-3">
+            <ul className="flex items-center gap-8 text-sm text-gray-500">
+              {categories.map((category) => (
+                <li key={category}>
+                  <Link to={`/category/${categoryMap[category]}`}>
+                    {category}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
