@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { useInfiniteProducts } from "@/hooks/useProducts"; // useInfiniteProducts 훅 경로 확인 필요
+import { useInfiniteProducts } from "@/hooks/useProducts";
 
 const categoryData = {
   seasonal: {
@@ -26,7 +26,7 @@ const Category = () => {
   const [sortOption, setSortOption] = useState("newest");
   const { ref, inView } = useInView();
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteProducts(category ?? "allproducts", sortOption);
 
   useEffect(() => {
@@ -40,6 +40,10 @@ const Category = () => {
   const handleSortChange = (value: string) => {
     setSortOption(value);
   };
+
+  if (isFetching && !isFetchingNextPage) {
+    return <div className="p-4">Loading...</div>;
+  }
 
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOption === "lowest") {

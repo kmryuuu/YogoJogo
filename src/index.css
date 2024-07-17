@@ -83,6 +83,10 @@
     @apply font-bold;
     font-family: "Pretendard Variable", sans-serif;
   }
+
+  button {
+    cursor: pointer;
+  }
 }
 
 @layer components {
@@ -92,6 +96,7 @@
     background-position: center;
     background-repeat: no-repeat;
   }
+
   .bg-login {
     background-image: url("@/assets/images/bg-login.png");
     background-size: cover;
@@ -103,7 +108,7 @@
   }
 
   .button-shape {
-    @apply w-full rounded-lg p-4 text-base;
+    @apply w-full rounded-lg p-4 text-lg;
   }
 
   .border-primary {

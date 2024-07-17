@@ -8,7 +8,6 @@ const Layout = () => {
   const withoutFooterPages = [
     "/login",
     "/signup",
-    "/cart",
     "/orders",
     "/orders/orderlist",
     "/orders/inventory",
