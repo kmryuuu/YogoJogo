@@ -30,6 +30,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: CartProviderProps) => {
   const { user } = useAuth();
   const userId = user?.uid;
+  // 초기 상태 설정 : 로컬스토리지에서 장바구니 데이터를 가져옴
   const [cart, setCart] = useState<Product[]>(() => {
     const localData = localStorage.getItem("cart");
     return localData ? JSON.parse(localData) : [];

@@ -16,7 +16,7 @@ const ProductDetail = () => {
       if (id) {
         try {
           const fetchedProduct = await getProduct(id);
-          setProduct({ ...fetchedProduct, id }); // 여기서 ID를 명시적으로 추가
+          setProduct(fetchedProduct);
         } catch (error) {
           console.error("Error fetching product:", error);
         }
