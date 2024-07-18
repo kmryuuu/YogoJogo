@@ -2,47 +2,34 @@ import { db } from "@/utils/firebase";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { Product } from "@/interface/interface";
 
-interface CartAction {
-  userId: string;
-  product?: Product;
-  productId?: string;
-  quantity?: number;
-}
-
-export const getCart = async ({
-  userId,
-}: {
-  userId: string;
-}): Promise<{ items: Product[] }> => {
+// 장바구니 데이터 가져오기
+export const getCart = async (userId: string): Promise<Product[]> => {
   const cartDoc = doc(db, "carts", userId);
   const cartSnapshot = await getDoc(cartDoc);
   if (cartSnapshot.exists()) {
-    const cartData = cartSnapshot.data() as { items: any[] };
-    return {
-      items: cartData.items.map((item: any) => ({ ...item, id: item.id })),
-    };
+    const cartData = cartSnapshot.data() as { items: Product[] };
+    return cartData.items;
   } else {
     await setDoc(cartDoc, { items: [] });
-    return { items: [] };
+    return [];
   }
 };
 
-export const addToCart = async ({
-  userId,
-  product,
-}: CartAction): Promise<void> => {
-  if (!product) throw new Error("Product is required");
-
+// 장바구니에 상품 추가
+export const addToCart = async (
+  userId: string,
+  product: Product,
+): Promise<void> => {
   const cartDoc = doc(db, "carts", userId);
   const cartSnapshot = await getDoc(cartDoc);
 
-  let items = [];
+  let items: Product[] = [];
   if (cartSnapshot.exists()) {
     items = cartSnapshot.data().items;
   }
 
   const existingProductIndex = items.findIndex(
-    (item: Product) => item.id === product.id,
+    (item) => item.id === product.id,
   );
 
   if (existingProductIndex !== -1) {
@@ -54,12 +41,11 @@ export const addToCart = async ({
   await setDoc(cartDoc, { items }, { merge: true });
 };
 
-export const removeFromCart = async ({
-  userId,
-  productId,
-}: CartAction): Promise<void> => {
-  if (!productId) throw new Error("Product ID is required");
-
+// 장바구니에서 상품 제거
+export const removeFromCart = async (
+  userId: string,
+  productId: string,
+): Promise<void> => {
   const cartDoc = doc(db, "carts", userId);
   const cartSnapshot = await getDoc(cartDoc);
 
@@ -71,15 +57,12 @@ export const removeFromCart = async ({
   }
 };
 
-export const updateCartQuantity = async ({
-  userId,
-  productId,
-  quantity,
-}: {
-  userId: string;
-  productId: string;
-  quantity: number;
-}): Promise<void> => {
+// 장바구니 상품 수량 업데이트
+export const updateCartQuantity = async (
+  userId: string,
+  productId: string,
+  quantity: number,
+): Promise<void> => {
   const cartDoc = doc(db, "carts", userId);
   const cartSnapshot = await getDoc(cartDoc);
 

@@ -2,10 +2,10 @@ import CartItem from "@/components/Cart/CartItem";
 import { useCart } from "@/context/CartContext";
 
 const Cart = () => {
-  const { cart, removeFromCart, updateCartQuantity } = useCart();
+  const { cart, removeItem, updateCartQuantity } = useCart();
 
   const handleRemove = (productId: string) => {
-    removeFromCart(productId);
+    removeItem(productId);
   };
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {

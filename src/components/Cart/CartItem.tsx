@@ -36,7 +36,10 @@ const CartItem: React.FC<CartItemProps> = ({
           </button>
         </div>
         <div className="flex">
-          <img src={product.images[0]} className="h-20 w-20 rounded-md" />
+          <img
+            src={product.images[0]}
+            className="h-20 w-20 rounded-md object-cover"
+          />
           <div className="ml-4 flex h-20 flex-col">
             <p className="mb-5 text-lg font-bold">
               {product.price.toLocaleString()}원
