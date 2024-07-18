@@ -5,94 +5,28 @@ import {
   useState,
   ReactNode,
 } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/utils/firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "@/utils/firebase";
+import { Product, UserInfo } from "@/interface/interface";
 import {
   getCart,
-  addToCart as addProductToCart,
-  removeFromCart as removeProductFromCart,
-  updateCartQuantity as updateProductQuantity,
+  addToCart,
+  removeFromCart,
+  updateCartQuantity,
 } from "@/services/cartService";
-import { Product } from "@/interface/interface";
-import useAuth from "@/hooks/useAuth";
 
+export interface CartContextProps {
+  cart: Product[];
+  addItem: (item: Product) => Promise<void>;
+  removeItem: (itemId: string) => Promise<void>;
+  updateCartQuantity: (productId: string, quantity: number) => Promise<void>;
+}
 interface CartProviderProps {
   children: ReactNode;
 }
-
-interface CartContextType {
-  cart: Product[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
-  updateCartQuantity: (productId: string, newQuantity: number) => void;
-}
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
-
-export const CartProvider = ({ children }: CartProviderProps) => {
-  const { user } = useAuth();
-  const userId = user?.uid;
-  // 초기 상태 설정 : 로컬스토리지에서 장바구니 데이터를 가져옴
-  const [cart, setCart] = useState<Product[]>(() => {
-    const localData = localStorage.getItem("cart");
-    return localData ? JSON.parse(localData) : [];
-  });
-
-  useEffect(() => {
-    if (userId) {
-      const fetchCart = async () => {
-        const cartData = await getCart({ userId });
-        setCart(cartData.items);
-      };
-      fetchCart();
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = async (product: Product) => {
-    if (userId) {
-      await addProductToCart({ userId, product });
-    }
-    setCart((prevCart) => {
-      const existingProductIndex = prevCart.findIndex(
-        (item) => item.id === product.id,
-      );
-      if (existingProductIndex !== -1) {
-        const updatedCart = [...prevCart];
-        updatedCart[existingProductIndex].quantity += product.quantity;
-        return updatedCart;
-      }
-      return [...prevCart, product];
-    });
-  };
-
-  const removeFromCart = async (productId: string) => {
-    if (userId) {
-      await removeProductFromCart({ userId, productId });
-    }
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
-  };
-
-  const updateCartQuantity = async (productId: string, newQuantity: number) => {
-    if (userId) {
-      await updateProductQuantity({ userId, productId, quantity: newQuantity });
-    }
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === productId ? { ...item, quantity: newQuantity } : item,
-      ),
-    );
-  };
-
-  return (
-    <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateCartQuantity }}
-    >
-      {children}
-    </CartContext.Provider>
-  );
-};
+const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export const useCart = () => {
   const context = useContext(CartContext);
@@ -100,4 +34,108 @@ export const useCart = () => {
     throw new Error("useCart must be used within a CartProvider");
   }
   return context;
+};
+
+export const CartProvider = ({ children }: CartProviderProps) => {
+  const [cart, setCart] = useState<Product[]>([]);
+  const [user, setUser] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(
+      localStorage.getItem("cart") || "[]",
+    ) as Product[];
+    if (storedCart) {
+      setCart(storedCart);
+    }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as UserInfo;
+          setUser({
+            uid: currentUser.uid,
+            name: userData.name,
+            email: currentUser.email,
+            isAdmin: userData.isAdmin,
+            createdAt: userData.createdAt,
+          });
+
+          // 로컬스토리지와 Firestore 데이터 병합
+          const cartData = await getCart(currentUser.uid);
+          const storedCart = JSON.parse(
+            localStorage.getItem("cart") || "[]",
+          ) as Product[];
+
+          const mergedCart = [...new Set([...cartData, ...storedCart])];
+
+          setCart(mergedCart);
+
+          await setDoc(doc(db, "carts", currentUser.uid), {
+            items: mergedCart,
+          });
+
+          localStorage.removeItem("cart");
+        }
+      } else {
+        setUser(null);
+        setCart([]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const addItem = async (item: Product) => {
+    if (user) {
+      await addToCart(user.uid, item);
+      const updatedCart = await getCart(user.uid);
+      setCart(updatedCart);
+    } else {
+      const updatedCart = [...cart, item];
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+  };
+
+  const removeItem = async (itemId: string) => {
+    if (user) {
+      await removeFromCart(user.uid, itemId);
+      const updatedCart = await getCart(user.uid);
+      setCart(updatedCart);
+    } else {
+      const updatedCart = cart.filter((item) => item.id !== itemId);
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+  };
+
+  const updateItemQuantity = async (productId: string, quantity: number) => {
+    if (user) {
+      await updateCartQuantity(user.uid, productId, quantity);
+      const updatedCart = await getCart(user.uid);
+      setCart(updatedCart);
+    } else {
+      const updatedCart = cart.map((item) =>
+        item.id === productId ? { ...item, quantity } : item,
+      );
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+  };
+
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        addItem,
+        removeItem,
+        updateCartQuantity: updateItemQuantity,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 };

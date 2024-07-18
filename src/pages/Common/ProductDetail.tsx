@@ -9,7 +9,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id?: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -36,7 +36,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart({ ...product, quantity });
+      addItem({ ...product, quantity });
       alert("상품이 장바구니에 추가되었습니다.");
     }
   };
