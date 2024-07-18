@@ -84,7 +84,7 @@ export const fetchProducts = async ({
 export const getProduct = async (id: string): Promise<Product> => {
   const productDoc = await getDoc(doc(db, "products", id));
   if (productDoc.exists()) {
-    return productDoc.data() as Product;
+    return { ...productDoc.data(), id } as Product; // id를 반환하지 않아 명시적으로 추가
   }
   throw new Error("Product not found");
 };
