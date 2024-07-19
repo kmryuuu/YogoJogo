@@ -186,7 +186,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         loading,
       }}
     >
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

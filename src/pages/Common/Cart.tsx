@@ -2,14 +2,14 @@ import CartItem from "@/components/Cart/CartItem";
 import { useCart } from "@/context/CartContext";
 
 const Cart = () => {
-  const { cart, removeItem, updateCartQuantity } = useCart();
+  const { cart, removeItem, updateItemQuantity } = useCart();
 
   const handleRemove = (productId: string) => {
     removeItem(productId);
   };
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
-    updateCartQuantity(productId, newQuantity);
+    updateItemQuantity(productId, newQuantity);
   };
 
   const totalAmount = cart.reduce(

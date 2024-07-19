@@ -21,7 +21,7 @@ export interface CartContextProps {
   cart: Product[];
   addItem: (item: Product) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
-  updateCartQuantity: (productId: string, quantity: number) => Promise<void>;
+  updateItemQuantity: (productId: string, quantity: number) => Promise<void>;
 }
 interface CartProviderProps {
   children: ReactNode;
@@ -132,7 +132,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         cart,
         addItem,
         removeItem,
-        updateCartQuantity: updateItemQuantity,
+        updateItemQuantity,
       }}
     >
       {children}
