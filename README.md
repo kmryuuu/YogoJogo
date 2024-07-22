@@ -2,8 +2,8 @@
 요고조고는 1인 가구를 위해 소량의 식재료를 카테고리별로 나누어 간편하게 구매할 수 있는 서비스입니다.
 
 ## 👀 기획
-* 유저플로우
-* 와이어프레임
+* 유저플로우 : [유저플로우](https://www.figma.com/board/rAjdEnXhkceeGiWmBm2FnG/User-Flow?node-id=0-1&t=ENewWJmsqGneInvO-0)
+* 와이어프레임 : [와이어프레임](https://www.figma.com/design/sY5rLPTr8rlWPFlExylhBn/%EC%BB%A4%EB%A8%B8%EC%8A%A4-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8?node-id=0-1&t=fcgLdLh3ab3ayakU-0)
 
 ## ⚙️ 개발환경
 * 인원 : 1인
