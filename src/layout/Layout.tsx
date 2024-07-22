@@ -8,24 +8,24 @@ const Layout = () => {
   const withoutFooterPages = [
     "/login",
     "/signup",
-    "/orders",
-    "/orders/orderlist",
-    "/orders/inventory",
-    "/orders/create",
+    "/admin",
+    "/admin/orderlist",
+    "/admin/inventory",
+    "/admin/create",
   ];
   const withoutHeaderPages = [
-    "/orders",
-    "/orders/orderlist",
-    "/orders/inventory",
-    "/orders/create",
+    "/admin",
+    "/admin/orderlist",
+    "/admin/inventory",
+    "/admin/create",
   ];
   const fullScreenPages = [
     "/",
     "/login",
-    "/orders",
-    "/orders/orderlist",
-    "/orders/inventory",
-    "/orders/create",
+    "/admin",
+    "/admin/orderlist",
+    "/admin/inventory",
+    "/admin/create",
   ];
 
   const isWithoutFooterPage = withoutFooterPages.some(
