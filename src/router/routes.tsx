@@ -16,6 +16,9 @@ import Error from "@/pages/Common/Error";
 import Layout from "@/layout/Layout";
 import ProtectedRoutes from "@/router/ProtectedRoutes";
 import Category from "@/pages/Common/Category";
+import Checkout from "@/pages/Common/Checkout";
+import PaymentSuccess from "@/pages/Common/PaymentSuccess";
+import PaymentFail from "@/pages/Common/PaymentFail";
 
 const routes = createBrowserRouter([
   {
@@ -36,6 +39,18 @@ const routes = createBrowserRouter([
         element: <Cart />,
       },
       {
+        path: "orders",
+        element: (
+          <ProtectedRoutes>
+            <Checkout />
+          </ProtectedRoutes>
+        ),
+        children: [
+          { path: "success", element: <PaymentSuccess /> },
+          { path: "fail", element: <PaymentFail /> },
+        ],
+      },
+      {
         path: "mypage",
         element: (
           <ProtectedRoutes>
@@ -49,7 +64,7 @@ const routes = createBrowserRouter([
         ],
       },
       {
-        path: "orders",
+        path: "admin",
         element: (
           <ProtectedRoutes adminOnly>
             <Orders />
