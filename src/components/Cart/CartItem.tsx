@@ -1,20 +1,23 @@
-import React from "react";
 import QuantityButton from "../Product/QuantityButton";
 import { Product } from "@/interface/interface";
 
 interface CartItemProps {
   product: Product;
   quantity: number;
+  isChecked: boolean;
   onRemove: () => void;
+  onCheckboxChange: () => void;
   onQuantityChange: (newQuantity: number) => void;
 }
 
-const CartItem: React.FC<CartItemProps> = ({
+const CartItem = ({
   product,
   quantity,
+  isChecked,
   onRemove,
+  onCheckboxChange,
   onQuantityChange,
-}) => {
+}: CartItemProps) => {
   const increment = () => {
     onQuantityChange(quantity + 1);
   };
@@ -26,7 +29,11 @@ const CartItem: React.FC<CartItemProps> = ({
   return (
     <div className="relative mt-6 flex w-full">
       <div>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={onCheckboxChange}
+        />
       </div>
       <div className="ml-2 flex flex-col">
         <div className="mb-3">
