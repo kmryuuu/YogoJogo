@@ -1,9 +1,24 @@
-import CartItem from "@/components/Cart/CartItem";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import CartItem from "@/components/Cart/CartItem";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const { cart, removeItem, updateItemQuantity } = useCart();
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
+  useEffect(() => {
+    setSelectedItems(cart.map((item) => item.id));
+  }, [cart]);
+
+  const handleCheckboxChange = (productId: string) => {
+    setSelectedItems((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId],
+    );
+  };
   const handleRemove = (productId: string) => {
     removeItem(productId);
   };
@@ -12,10 +27,31 @@ const Cart = () => {
     updateItemQuantity(productId, newQuantity);
   };
 
-  const totalAmount = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
+  const handleRemoveSelectedItems = () => {
+    const itemsToDelete = cart.filter((item) =>
+      selectedItems.includes(item.id),
+    );
+    itemsToDelete.forEach((item) => removeItem(item.id));
+    setSelectedItems([]);
+  };
+
+  const handleSelectAll = () => {
+    setSelectedItems(
+      selectedItems.length === cart.length ? [] : cart.map((item) => item.id),
+    );
+  };
+
+  const handleCheckOut = () => {
+    const itemsToCheckout = cart.filter((item) =>
+      selectedItems.includes(item.id),
+    );
+    navigate("/orders", { state: { selectedItems: itemsToCheckout } });
+  };
+
+  const totalAmount = selectedItems.reduce((acc, itemId) => {
+    const item = cart.find((item) => item.id === itemId);
+    return acc + (item ? item.price * item.quantity : 0);
+  }, 0);
 
   return (
     <div className="mx-auto w-full max-w-sm">
@@ -24,12 +60,21 @@ const Cart = () => {
         <div className="my-4 flex">
           <div className="flex w-full items-center justify-between">
             <div className="flex">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={selectedItems.length === cart.length}
+                onChange={handleSelectAll}
+              />
               <p className="ml-2 text-sm font-semibold">
-                전체 선택 ({cart.length}/{cart.length})
+                전체 선택 ({selectedItems.length}/{cart.length})
               </p>
             </div>
-            <button className="text-sm font-semibold">선택 삭제</button>
+            <button
+              className="text-sm font-semibold"
+              onClick={handleRemoveSelectedItems}
+            >
+              선택 삭제
+            </button>
           </div>
         </div>
         <hr />
@@ -38,10 +83,12 @@ const Cart = () => {
             key={item.id}
             product={item}
             quantity={item.quantity}
+            isChecked={selectedItems.includes(item.id)}
             onRemove={() => handleRemove(item.id)}
             onQuantityChange={(newQuantity) =>
               handleQuantityChange(item.id, newQuantity)
             }
+            onCheckboxChange={() => handleCheckboxChange(item.id)}
           />
         ))}
       </div>
@@ -69,7 +116,10 @@ const Cart = () => {
             <p className="ml-1 text-sm">원</p>
           </div>
         </div>
-        <button className="button-shape mt-6 bg-primary font-bold text-white">
+        <button
+          className="button-shape mt-6 bg-primary font-bold text-white"
+          onClick={handleCheckOut}
+        >
           구매하기
         </button>
       </div>
