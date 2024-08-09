@@ -19,13 +19,18 @@ import {
 
 export interface CartContextProps {
   cart: Product[];
+  selectedItems: Product[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<Product[]>>;
   addItem: (item: Product) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
   updateItemQuantity: (productId: string, quantity: number) => Promise<void>;
+  setCart: (items: Product[]) => void;
 }
+
 interface CartProviderProps {
   children: ReactNode;
 }
+
 const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export const useCart = () => {
@@ -39,6 +44,7 @@ export const useCart = () => {
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [cart, setCart] = useState<Product[]>([]);
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [selectedItems, setSelectedItems] = useState<Product[]>([]);
 
   useEffect(() => {
     const storedCart = JSON.parse(
@@ -63,14 +69,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
             createdAt: userData.createdAt,
           });
 
-          // 로컬스토리지와 Firestore 데이터 병합
           const cartData = await getCart(currentUser.uid);
           const storedCart = JSON.parse(
             localStorage.getItem("cart") || "[]",
           ) as Product[];
 
           const mergedCart = [...new Set([...cartData, ...storedCart])];
-
           setCart(mergedCart);
 
           await setDoc(doc(db, "carts", currentUser.uid), {
@@ -126,10 +130,22 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
   };
 
+  useEffect(() => {
+    console.log("Cart useEffect:", cart);
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
+    console.log("selectedItems useEffect:", selectedItems);
+  }, [selectedItems]);
+
   return (
     <CartContext.Provider
       value={{
         cart,
+        setCart,
+        selectedItems,
+        setSelectedItems,
         addItem,
         removeItem,
         updateItemQuantity,

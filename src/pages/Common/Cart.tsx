@@ -1,24 +1,34 @@
-import { useState, useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import CartItem from "@/components/Cart/CartItem";
+import { Product } from "@/interface/interface";
+import AuthContext from "@/context/AuthContext";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { cart, removeItem, updateItemQuantity } = useCart();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const {
+    cart,
+    removeItem,
+    updateItemQuantity,
+    selectedItems,
+    setSelectedItems,
+  } = useCart();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    setSelectedItems(cart.map((item) => item.id));
-  }, [cart]);
+    console.log("Cart useEffect:", cart);
+    setSelectedItems(cart);
+  }, [cart, setSelectedItems]);
 
   const handleCheckboxChange = (productId: string) => {
-    setSelectedItems((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId],
+    setSelectedItems((prev: Product[]): Product[] =>
+      prev.some((item: Product) => item.id === productId)
+        ? prev.filter((item: Product) => item.id !== productId)
+        : [...prev, cart.find((item: Product) => item.id === productId)!],
     );
   };
+
   const handleRemove = (productId: string) => {
     removeItem(productId);
   };
@@ -28,30 +38,36 @@ const Cart = () => {
   };
 
   const handleRemoveSelectedItems = () => {
-    const itemsToDelete = cart.filter((item) =>
-      selectedItems.includes(item.id),
+    const itemsToDelete = cart.filter((item: Product) =>
+      selectedItems.some(
+        (selectedItem: Product) => selectedItem.id === item.id,
+      ),
     );
-    itemsToDelete.forEach((item) => removeItem(item.id));
+    itemsToDelete.forEach((item: Product) => removeItem(item.id));
     setSelectedItems([]);
   };
 
   const handleSelectAll = () => {
-    setSelectedItems(
-      selectedItems.length === cart.length ? [] : cart.map((item) => item.id),
-    );
+    setSelectedItems(selectedItems.length === cart.length ? [] : cart);
   };
 
   const handleCheckOut = () => {
-    const itemsToCheckout = cart.filter((item) =>
-      selectedItems.includes(item.id),
-    );
-    navigate("/orders", { state: { selectedItems: itemsToCheckout } });
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    if (selectedItems.length === 0) {
+      alert("선택된 상품이 없습니다.");
+      return;
+    }
+    navigate("/orders/checkout");
   };
 
-  const totalAmount = selectedItems.reduce((acc, itemId) => {
-    const item = cart.find((item) => item.id === itemId);
-    return acc + (item ? item.price * item.quantity : 0);
-  }, 0);
+  const totalAmount = selectedItems.reduce(
+    (acc: number, item: Product) => acc + item.price * item.quantity,
+    0,
+  );
 
   return (
     <div className="mx-auto w-full max-w-sm">
@@ -78,14 +94,16 @@ const Cart = () => {
           </div>
         </div>
         <hr />
-        {cart.map((item) => (
+        {cart.map((item: Product) => (
           <CartItem
             key={item.id}
             product={item}
             quantity={item.quantity}
-            isChecked={selectedItems.includes(item.id)}
+            isChecked={selectedItems.some(
+              (selectedItem: Product) => selectedItem.id === item.id,
+            )}
             onRemove={() => handleRemove(item.id)}
-            onQuantityChange={(newQuantity) =>
+            onQuantityChange={(newQuantity: number) =>
               handleQuantityChange(item.id, newQuantity)
             }
             onCheckboxChange={() => handleCheckboxChange(item.id)}
@@ -119,6 +137,7 @@ const Cart = () => {
         <button
           className="button-shape mt-6 bg-primary font-bold text-white"
           onClick={handleCheckOut}
+          disabled={selectedItems.length === 0}
         >
           구매하기
         </button>

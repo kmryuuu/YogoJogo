@@ -39,16 +39,20 @@ const routes = createBrowserRouter([
         element: <Cart />,
       },
       {
-        path: "orders",
+        path: "orders/checkout",
         element: (
           <ProtectedRoutes>
             <Checkout />
           </ProtectedRoutes>
         ),
-        children: [
-          { path: "success", element: <PaymentSuccess /> },
-          { path: "fail", element: <PaymentFail /> },
-        ],
+      },
+      {
+        path: "payment/success",
+        element: <PaymentSuccess />,
+      },
+      {
+        path: "payment/fail",
+        element: <PaymentFail />,
       },
       {
         path: "mypage",
