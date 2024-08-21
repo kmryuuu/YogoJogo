@@ -47,15 +47,29 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const [selectedItems, setSelectedItems] = useState<Product[]>([]);
 
   useEffect(() => {
-    const storedCart = JSON.parse(
-      localStorage.getItem("cart") || "[]",
-    ) as Product[];
-    if (storedCart) {
-      setCart(storedCart);
-    }
-  }, []);
+    const mergeCarts = (
+      cartFromFirestore: Product[],
+      cartFromLocalStorage: Product[],
+    ) => {
+      const mergedCart: Product[] = [...cartFromFirestore];
 
-  useEffect(() => {
+      cartFromLocalStorage.forEach((localItem) => {
+        const existingItem = mergedCart.find(
+          (item) => item.id === localItem.id,
+        );
+
+        if (existingItem) {
+          // 동일한 상품이 있으면 수량 합산
+          existingItem.quantity += localItem.quantity;
+        } else {
+          // 중복되지 않은 상품은 그대로 추가
+          mergedCart.push(localItem);
+        }
+      });
+
+      return mergedCart;
+    };
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -74,13 +88,18 @@ export const CartProvider = ({ children }: CartProviderProps) => {
             localStorage.getItem("cart") || "[]",
           ) as Product[];
 
-          const mergedCart = [...new Set([...cartData, ...storedCart])];
-          setCart(mergedCart);
+          // 병합된 장바구니 생성
+          const mergedCart = mergeCarts(cartData, storedCart);
 
+          // 병합된 장바구니 Firestore에 저장
           await setDoc(doc(db, "carts", currentUser.uid), {
             items: mergedCart,
           });
 
+          // 로컬 상태와 Firestore 업데이트
+          setCart(mergedCart);
+
+          // 로컬 스토리지 초기화
           localStorage.removeItem("cart");
         }
       } else {
@@ -90,7 +109,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [setCart]);
 
   const addItem = async (item: Product) => {
     if (user) {
