@@ -4,6 +4,8 @@ import { useCart } from "@/context/CartContext";
 import CartItem from "@/components/Cart/CartItem";
 import { Product } from "@/interface/interface";
 import AuthContext from "@/context/AuthContext";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/utils/firebase";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -13,11 +15,11 @@ const Cart = () => {
     updateItemQuantity,
     selectedItems,
     setSelectedItems,
+    setCart,
   } = useCart();
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log("Cart useEffect:", cart);
     setSelectedItems(cart);
   }, [cart, setSelectedItems]);
 
@@ -37,13 +39,28 @@ const Cart = () => {
     updateItemQuantity(productId, newQuantity);
   };
 
-  const handleRemoveSelectedItems = () => {
-    const itemsToDelete = cart.filter((item: Product) =>
-      selectedItems.some(
-        (selectedItem: Product) => selectedItem.id === item.id,
-      ),
+  const handleRemoveSelectedItems = async () => {
+    const itemsToDeleteIds = selectedItems.map((item: Product) => item.id);
+
+    // 필터링하여 삭제할 항목들을 제외한 새로운 장바구니 생성
+    const updatedCart = cart.filter(
+      (item: Product) => !itemsToDeleteIds.includes(item.id),
     );
-    itemsToDelete.forEach((item: Product) => removeItem(item.id));
+
+    // Firestore와 로컬 스토리지에서 장바구니 업데이트
+    if (user) {
+      try {
+        await setDoc(doc(db, "carts", user.uid), {
+          items: updatedCart,
+        });
+      } catch (error) {
+        console.error("Failed to update cart in Firestore:", error);
+      }
+    } else {
+      // 비로그인 시 장바구니 로컬스토리지 저장
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+    setCart(updatedCart);
     setSelectedItems([]);
   };
 
