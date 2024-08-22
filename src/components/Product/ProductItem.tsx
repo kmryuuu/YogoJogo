@@ -7,9 +7,15 @@ interface ProductItemProps {
   product: Product;
   onCheckedItem: (id: string, isChecked: boolean) => void;
   checked: boolean;
+  categoryName: string;
 }
 
-const ProductItem = ({ product, onCheckedItem, checked }: ProductItemProps) => {
+const ProductItem = ({
+  product,
+  onCheckedItem,
+  checked,
+  categoryName,
+}: ProductItemProps) => {
   const navigate = useNavigate();
 
   return (
@@ -34,10 +40,10 @@ const ProductItem = ({ product, onCheckedItem, checked }: ProductItemProps) => {
         </div>
       </TableCell>
       <TableCell className="px-4 py-2 text-center align-middle">
-        {product.category}
+        {categoryName}
       </TableCell>
       <TableCell className="px-4 py-2 text-center align-middle">
-        {product.price}원
+        {product.price.toLocaleString()}원
       </TableCell>
       <TableCell className="px-4 py-2 text-center align-middle">
         {product.quantity}
@@ -46,7 +52,7 @@ const ProductItem = ({ product, onCheckedItem, checked }: ProductItemProps) => {
         <Button
           variant="outline"
           className="border px-2 py-1"
-          onClick={() => navigate(`/orders/edit/${product.id}`)}
+          onClick={() => navigate(`/admin/edit/${product.id}`)}
         >
           수정
         </Button>

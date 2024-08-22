@@ -105,6 +105,12 @@ const ProductList = () => {
     setCategory(newCategory);
   };
 
+  // 영어로 저장된 카테고리를 한글로 표시
+  const getCategoryName = (categoryId: any) => {
+    const category = categoriesList.find((item) => item.id === categoryId);
+    return category ? category.name : categoryId;
+  };
+
   return (
     <div className="px-12">
       <h2 className="my-12 text-lg">판매중인 상품</h2>
@@ -160,6 +166,7 @@ const ProductList = () => {
                   product={product}
                   onCheckedItem={onCheckedItem}
                   checked={checkedList.includes(product.id)}
+                  categoryName={getCategoryName(product.category)}
                 />
               ))
             ) : (

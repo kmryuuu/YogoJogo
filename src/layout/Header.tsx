@@ -45,7 +45,7 @@ const Header = () => {
           <ul className="flex items-center gap-6 text-xs text-fontColor-darkGray">
             {isAdmin ? (
               <li>
-                <Link to="/orders">
+                <Link to="/admin">
                   <span>관리자 모드</span>
                 </Link>
               </li>
