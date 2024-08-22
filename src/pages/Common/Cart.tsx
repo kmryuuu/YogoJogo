@@ -97,6 +97,7 @@ const Cart = () => {
                 type="checkbox"
                 checked={selectedItems.length === cart.length}
                 onChange={handleSelectAll}
+                disabled={selectedItems.length === 0}
               />
               <p className="ml-2 text-sm font-semibold">
                 전체 선택 ({selectedItems.length}/{cart.length})

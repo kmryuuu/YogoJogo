@@ -21,9 +21,9 @@ const DashBoard = () => {
     <div className="flex h-full w-full flex-col p-8">
       <div>
         <h1 className="my-12 px-4 text-xl">관리자 페이지</h1>
-        <AdminMenuitems to="/orders/orderlist" title="주문 현황" />
-        <AdminMenuitems to="/orders/inventory" title="상품 조회/수정" />
-        <AdminMenuitems to="/orders/create" title="상품 등록" />
+        <AdminMenuitems to="/admin/orderlist" title="주문 현황" />
+        <AdminMenuitems to="/admin/inventory" title="상품 조회/수정" />
+        <AdminMenuitems to="/admin/create" title="상품 등록" />
       </div>
       <div className="mt-auto flex flex-col">
         <Button
