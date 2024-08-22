@@ -108,6 +108,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       }
     });
 
+    // 클린업 함수
+    // 컴포넌트가 언마운트되거나, 필요 없어질 때 리스너 해제
     return () => unsubscribe();
   }, [setCart]);
 
@@ -148,15 +150,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       localStorage.setItem("cart", JSON.stringify(updatedCart));
     }
   };
-
-  useEffect(() => {
-    console.log("Cart useEffect:", cart);
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  useEffect(() => {
-    console.log("selectedItems useEffect:", selectedItems);
-  }, [selectedItems]);
 
   return (
     <CartContext.Provider

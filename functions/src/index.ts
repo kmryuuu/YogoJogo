@@ -6,7 +6,7 @@ import * as cors from "cors";
 admin.initializeApp();
 const db = admin.firestore();
 
-const corsHandler = cors({origin: true});
+const corsHandler = cors({ origin: true });
 
 export const approvePayment = functions
   .runWith({
@@ -15,7 +15,7 @@ export const approvePayment = functions
   })
   .https.onRequest((req, res) => {
     corsHandler(req, res, async () => {
-      const {paymentKey, orderId, amount, userId} = req.body;
+      const { paymentKey, orderId, amount, userId } = req.body;
 
       if (!paymentKey || !orderId || !amount || !userId) {
         functions.logger.error("Missing required parameters", {
@@ -24,7 +24,7 @@ export const approvePayment = functions
           amount,
           userId,
         });
-        res.status(400).send({error: "Missing required parameters"});
+        res.status(400).send({ error: "Missing required parameters" });
         return;
       }
 
@@ -41,11 +41,12 @@ export const approvePayment = functions
               "Authorization": encryptedApiSecretKey,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({paymentKey, orderId, amount}),
+            body: JSON.stringify({ paymentKey, orderId, amount }),
           },
         );
 
         const result = await response.json();
+        functions.logger.info("Received payment result:", result);
 
         if (!response.ok) {
           functions.logger.error("Payment approval failed", result);
@@ -59,12 +60,12 @@ export const approvePayment = functions
           .doc(userId)
           .collection("userOrders")
           .doc(orderId)
-          .update({status: "completed"});
+          .update({ status: "completed" });
 
         res.status(200).json(result);
       } catch (error) {
         functions.logger.error("Payment approval error", error);
-        res.status(500).send({error: "Payment approval error"});
+        res.status(500).send({ error: "Payment approval error" });
       }
     });
   });

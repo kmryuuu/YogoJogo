@@ -9,7 +9,7 @@ const clientKey = import.meta.env.VITE_TOSS_PAYMENT_CLIENT_KEY;
 const originUrl = import.meta.env.VITE_ORIGIN_URL;
 
 const Checkout = () => {
-  const { selectedItems, setCart, setSelectedItems } = useCart();
+  const { selectedItems } = useCart();
   const { user } = useContext(AuthContext);
 
   const validSelectedItems = selectedItems.filter((item) => item);
@@ -65,12 +65,7 @@ const Checkout = () => {
           useAppCardOnly: false,
         },
       });
-
-      // 결제 성공 시 카트를 비우고 선택된 아이템 초기화
-      setCart([]);
-      setSelectedItems([]);
     } catch (error) {
-      console.error("Payment request failed:", error);
       // 결제 실패 시 Firestore 업데이트
       await updateDoc(doc(db, "orders", user.uid, "userOrders", orderId), {
         status: "failed",
