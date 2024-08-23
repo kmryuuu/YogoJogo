@@ -35,7 +35,7 @@ const PaymentSuccess = () => {
         const json = await response.json();
 
         if (response.ok) {
-          // Firestore에서 장바구니 초기화 처리
+          // Firestore에서 장바구니 초기화
           if (user) {
             await deleteDoc(doc(db, "carts", user.uid));
           }
