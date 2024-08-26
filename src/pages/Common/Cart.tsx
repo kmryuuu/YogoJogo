@@ -139,7 +139,7 @@ const Cart = () => {
         <div className="flex justify-between">
           <p>배송비</p>
           <div className="flex items-center">
-            <p className="text-lg">+ 0</p>
+            <p className="text-lg">0</p>
             <p className="ml-1 text-sm">원</p>
           </div>
         </div>
