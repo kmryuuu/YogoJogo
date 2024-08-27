@@ -53,7 +53,6 @@ const PaymentSuccess = () => {
           throw { message: json.message, code: json.code };
         }
       } catch (error: any) {
-        console.log("Caught error:", error);
         let errorMessage = "결제 중 오류가 발생하였습니다.";
         if (error instanceof Error) {
           errorMessage = error.message;

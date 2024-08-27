@@ -9,6 +9,7 @@ import AddressSearch from "@/components/Address/AddressSearch";
 
 interface OrderFormInputs {
   address: string;
+  detailAddress: string;
   name: string;
   phone: string;
 }
@@ -40,7 +41,11 @@ const Checkout = () => {
       ? `${validSelectedItems[0]?.title} 외 ${validSelectedItems.length - 1}개`
       : validSelectedItems[0]?.title;
 
-  const handleCheckout = async () => {
+  // 결제하기
+  const handleCheckout = async (
+    orderId: string,
+    orderData: OrderFormInputs,
+  ) => {
     if (!user) {
       alert("로그인이 필요합니다.");
       return;
@@ -51,15 +56,19 @@ const Checkout = () => {
       customerKey: user?.uid || "",
     });
 
-    const orderId = generateRandomString();
-
     try {
-      // 결제 정보를 먼저 서버에 저장
+      // 결제 정보를 firestore에 저장
       await setDoc(doc(db, "orders", user.uid, "userOrders", orderId), {
         orderId,
         amount: totalAmount,
         orderName,
         items: selectedItems,
+        userInfo: {
+          address: orderData.address,
+          detailAddress: orderData.detailAddress,
+          name: orderData.name,
+          phone: orderData.phone,
+        },
         status: "pending",
         createdAt: new Date(),
       });
@@ -89,7 +98,12 @@ const Checkout = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<OrderFormInputs> = (data) => console.log(data);
+  // onSubmit에서 주문자 정보를 Firestore에 저장하고 handleCheckout을 호출
+  const onSubmit: SubmitHandler<OrderFormInputs> = async (data) => {
+    const orderId = generateRandomString();
+    console.log(data);
+    await handleCheckout(orderId, data);
+  };
 
   const handleAddressComplete = (data: any) => {
     setValue("address", data.address);
@@ -124,7 +138,7 @@ const Checkout = () => {
                 />
                 <div className="ml-3 flex flex-col justify-center">
                   <p className="mb-1">{item.title}</p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-3">
                     <p className="font-bold">
                       {Number(item.price).toLocaleString()}원
                     </p>
@@ -140,7 +154,7 @@ const Checkout = () => {
         )}
       </div>
       <p className="mb-3 mt-6 text-lg font-bold">배송 정보</p>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <label htmlFor="address" className="text-sm text-fontColor-darkGray">
           주소
         </label>
@@ -161,9 +175,13 @@ const Checkout = () => {
           </button>
         </div>
         <input
+          id="detailAddress"
           type="text"
           placeholder="상세 주소를 입력해 주세요"
           className="form-input border"
+          {...register("detailAddress", {
+            required: "상세주소를 입력해 주세요.",
+          })}
         />
         {errors.address && (
           <p className="mt-2 text-xs text-red-500">주소를 입력해 주세요.</p>
@@ -219,7 +237,8 @@ const Checkout = () => {
         </div>
       </div>
       <button
-        onClick={handleCheckout}
+        type="button"
+        onClick={handleSubmit(onSubmit)}
         className="button-shape bg-primary text-lg font-bold text-white"
       >
         {totalAmount.toLocaleString()}원 결제하기

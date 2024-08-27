@@ -49,7 +49,7 @@ const CartItem = ({
           />
           <div className="ml-4 flex h-20 flex-col">
             <p className="mb-5 text-lg font-bold">
-              {product.price.toLocaleString()}원
+              {Number(product.price).toLocaleString()}원
             </p>
             <QuantityButton
               quantity={quantity}
