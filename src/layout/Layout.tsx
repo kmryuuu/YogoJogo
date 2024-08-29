@@ -12,6 +12,8 @@ const Layout = () => {
     "/admin/orderlist",
     "/admin/inventory",
     "/admin/create",
+    "/payment/success",
+    "/payment/fail",
   ];
   const withoutHeaderPages = [
     "/admin",
@@ -26,6 +28,8 @@ const Layout = () => {
     "/admin/orderlist",
     "/admin/inventory",
     "/admin/create",
+    "/payment/success",
+    "/payment/fail",
   ];
 
   const isWithoutFooterPage = withoutFooterPages.some(

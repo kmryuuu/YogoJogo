@@ -4,6 +4,7 @@ import { useCart } from "@/context/CartContext";
 import AuthContext from "@/context/AuthContext";
 import { db } from "@/utils/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
+import imgSuccess from "@/assets/images/image-success.png";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
@@ -53,13 +54,7 @@ const PaymentSuccess = () => {
           throw { message: json.message, code: json.code };
         }
       } catch (error: any) {
-        let errorMessage = "결제 중 오류가 발생하였습니다.";
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        navigate(
-          `/payment/fail?code=${error.code}&message=${encodeURIComponent(errorMessage)}`,
-        );
+        navigate(`/payment/fail?code=${error.code}&message=${error.message}`);
       }
     }
 
@@ -67,11 +62,20 @@ const PaymentSuccess = () => {
   }, [searchParams, navigate, user, setCart, setSelectedItems]);
 
   return (
-    <div>
-      <h2>결제가 완료되었습니다.</h2>
-      <p>주문 번호: {searchParams.get("orderId")}</p>
-      <p>결제 금액: {Number(searchParams.get("amount")).toLocaleString()} 원</p>
-      <button onClick={() => navigate("/mypage/history")}>주문 상세보기</button>
+    <div
+      className="flex h-screen flex-col items-center justify-center"
+      style={{ height: "calc(100vh - 4rem)" }}
+    >
+      <img src={imgSuccess} alt="결제 완료 이미지" className="w-16" />
+      <h2 className="mb-2 mt-4 text-2xl">결제를 완료했어요</h2>
+      <p>안전하게 보내드릴게요 :)</p>
+      <button
+        onClick={() => navigate("/mypage/history")}
+        className="mt-12 rounded-md px-20 py-3 font-bold"
+        style={{ backgroundColor: "#FEEFE1", color: "#FF7A00" }}
+      >
+        주문 상세보기
+      </button>
     </div>
   );
 };
