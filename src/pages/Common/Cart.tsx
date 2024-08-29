@@ -104,8 +104,9 @@ const Cart = () => {
               </p>
             </div>
             <button
-              className="text-sm font-semibold"
+              className="rounded-md border p-2 text-sm font-semibold"
               onClick={handleRemoveSelectedItems}
+              disabled={selectedItems.length === 0}
             >
               선택 삭제
             </button>
@@ -130,34 +131,23 @@ const Cart = () => {
       </div>
       <div className="mt-12 flex flex-col gap-2">
         <div className="flex justify-between">
-          <p>상품 금액</p>
-          <div className="flex items-center">
-            <p className="text-lg">{totalAmount.toLocaleString()}</p>
-            <p className="ml-1 text-sm">원</p>
-          </div>
+          <p>총 상품 금액</p>
+          <p className="text-lg">{totalAmount.toLocaleString()}원</p>
         </div>
         <div className="flex justify-between">
           <p>배송비</p>
-          <div className="flex items-center">
-            <p className="text-lg">0</p>
-            <p className="ml-1 text-sm">원</p>
-          </div>
+          <p className="text-lg">0원</p>
         </div>
-        <div className="flex justify-between">
-          <p>결제 금액</p>
-          <div className="flex items-center">
-            <p className="text-lg font-extrabold">
-              {totalAmount.toLocaleString()}
-            </p>
-            <p className="ml-1 text-sm">원</p>
-          </div>
+        <div className="mt-2 flex justify-between font-extrabold">
+          <p className="text-lg">결제금액</p>
+          <p className="text-xl">{totalAmount.toLocaleString()}원</p>
         </div>
         <button
           className="button-shape mt-6 bg-primary font-bold text-white"
           onClick={handleCheckOut}
           disabled={selectedItems.length === 0}
         >
-          구매하기
+          주문하기
         </button>
       </div>
     </div>

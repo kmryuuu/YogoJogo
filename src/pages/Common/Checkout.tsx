@@ -101,7 +101,6 @@ const Checkout = () => {
   // onSubmit에서 주문자 정보를 Firestore에 저장하고 handleCheckout을 호출
   const onSubmit: SubmitHandler<OrderFormInputs> = async (data) => {
     const orderId = generateRandomString();
-    console.log(data);
     await handleCheckout(orderId, data);
   };
 
@@ -201,7 +200,7 @@ const Checkout = () => {
           <p className="mb-2 text-xs text-red-500">이름을 입력해 주세요.</p>
         )}
         <label htmlFor="address" className="text-sm text-fontColor-darkGray">
-          연락처
+          연락처 (- 제외)
         </label>
         <input
           id="phone"
@@ -219,19 +218,20 @@ const Checkout = () => {
         onClose={() => setModalOpen(false)}
         onComplete={handleAddressComplete}
       />
-      <h2 className="mt-6 text-lg">주문 금액</h2>
-      <div className="my-6 flex flex-col gap-4">
+      <h2 className="my-6 text-lg">주문 금액</h2>
+      <div className="flex flex-col gap-3">
         <div className="flex justify-between">
           <p>주문 금액</p>
           <p className="font-semibold">{totalAmount.toLocaleString()}원</p>
         </div>
-        <div className="flex justify-between">
+        <div className="mb-3 flex justify-between">
           <p>배송비</p>
           <p className="font-semibold">0원</p>
         </div>
-        <div className="flex justify-between">
+        <hr />
+        <div className="mb-8 mt-4 flex justify-between">
           <p>결제 예정 금액</p>
-          <p className="text-lg font-extrabold">
+          <p className="text-2xl font-extrabold">
             {totalAmount.toLocaleString()}원
           </p>
         </div>
@@ -239,7 +239,7 @@ const Checkout = () => {
       <button
         type="button"
         onClick={handleSubmit(onSubmit)}
-        className="button-shape bg-primary text-lg font-bold text-white"
+        className="button-shape bg-primary text-xl font-bold text-white"
       >
         {totalAmount.toLocaleString()}원 결제하기
       </button>
